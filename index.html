@@ -29,21 +29,9 @@
             --input-border-color: #ced4da;
             --input-text-color: #495057;
             --danger-color: #dc3545;
-            --settings-icon-fill: #FFFFFF;
-
-            /* UI Elements */
-            --icon-button-size: 20px;
-            --enable-translucency: 0; 
-            --ui-element-base-color-rgb: 255, 255, 255; 
-            --ui-element-opacity: 0.85; 
-            --ui-element-backdrop-blur: 5px; 
-            --ui-element-border-color: rgba(200, 200, 200, 0.3);
-
-            /* Background Visualizer Specific */
-            --visualizer-accent-color: #6A0DAD;
+            --toggle-icon-fill: #FFFFFF;
         }
 
-        /* Dark Mode Theme */
         body.dark-mode {
             --header-gradient-start: #23272A;
             --header-gradient-end: #5865F2;
@@ -53,7 +41,7 @@
             --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             --card-title-color: #FFFFFF;
             --card-icon-color: #7289DA;
-            --text-color-dark: #E1E1E1; /* Lighter text for dark bg */
+            --text-color-dark: #E1E1E1;
             --link-color: #7289DA;
             --button-primary-bg: #5865F2;
             --button-primary-hover-bg: #4752C4;
@@ -61,10 +49,6 @@
             --input-border-color: #2C2F33;
             --input-text-color: #FFFFFF;
             --danger-color: #ED4245;
-            --settings-icon-fill: #FFFFFF;
-            --ui-element-base-color-rgb: 44, 47, 51; /* Darker base for translucency */
-            --ui-element-border-color: rgba(255, 255, 255, 0.1);
-            --visualizer-accent-color: #7289DA;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -80,7 +64,6 @@
 
         *, *:before, *:after { box-sizing: inherit; }
 
-        /* Styles for Particle Canvas and Floating Boxes Area */
         #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
         .area { width: 100%; height: 100vh; position: fixed; top: 0; left: 0; z-index: -1; display: none; }
         .circles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
@@ -92,16 +75,38 @@
             color: var(--header-main-title-color); padding: 15px 0;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); position: relative;
             z-index: 2;
-            transition: background 0.3s ease; 
+            transition: background 0.3s ease;
         }
         .top-header-content { width: 95%; max-width: 1100px; margin: 0 auto; text-align: center; display: flex; justify-content: center; align-items: center; position: relative; }
         .top-header-content h1 { font-size: 2rem; font-weight: 700; margin: 0; color: var(--header-main-title-color); flex-grow: 1; }
-
-        #settings-button { background: none; border: none; color: var(--settings-icon-fill); cursor: pointer; padding: 8px; border-radius: 50%; transition: transform 0.3s ease-in-out, background-color 0.2s ease; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); }
-        #settings-button svg { width: 28px; height: 28px; fill: currentColor; }
-        #settings-button:hover { transform: translateY(-50%) rotate(45deg); background-color: rgba(255, 255, 255, 0.15); }
-        #settings-button:active { transform: translateY(-50%) rotate(45deg) scale(0.9); }
         
+        #dark-mode-toggle {
+            background: none;
+            border: none;
+            color: var(--toggle-icon-fill);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: transform 0.3s ease-in-out, background-color 0.2s ease;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        #dark-mode-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            transition: transform 0.4s ease;
+        }
+        #dark-mode-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        .sun-icon { display: none; }
+        .dark-mode .sun-icon { display: block; }
+        .dark-mode .moon-icon { display: none; }
+
+
         .container { width: 95%; max-width: 1100px; margin: 30px auto; padding: 0 15px; position: relative; z-index: 1; }
         .tools-title { font-size: 2rem; font-weight: 700; color: var(--section-title-color); margin-bottom: 30px; text-align: left; }
         .content-section { margin-bottom: 40px; }
@@ -109,39 +114,24 @@
         #program-menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 20px; margin-bottom: 20px; }
 
         .program-item { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px 15px; background-color: var(--card-bg-color); border: 1px solid #E9ECEF; border-radius: var(--card-border-radius); box-shadow: var(--card-shadow); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease; text-decoration: none; min-height: 140px; }
+        .dark-mode .program-item { border-color: #40444B; }
         .program-item:hover { transform: translateY(-5px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); }
         .program-item .item-icon { font-size: 2.4rem; color: var(--card-icon-color); margin-bottom: 15px; }
         .program-item .item-title { font-size: 1rem; font-weight: 700; color: var(--card-title-color); margin: 0; line-height: 1.35; }
         
         #program-explanation { padding: 20px; background-color: var(--card-bg-color); border: 1px solid #E9ECEF; border-radius: var(--card-border-radius); min-height: 70px; white-space: pre-wrap; font-style: italic; color: #555; box-shadow: var(--card-shadow); font-size: 0.95rem; margin-top: 20px; margin-bottom: 40px; transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .dark-mode #program-explanation { border-color: #40444B; color: #B9BBBE; }
         #program-explanation.active { font-style: normal; color: var(--text-color-dark); }
-
-        /* Dark Mode Specific Overrides */
-        .dark-mode .program-item { border-color: #40444B; }
-        .dark-mode #program-explanation { background-color: #23272A; border-color: #40444B; color: #B9BBBE; }
         .dark-mode #program-explanation.active { color: #FFFFFF; }
 
-        .translucent-ui .program-item,
-        .translucent-ui #program-explanation,
-        .translucent-ui .modal-content {
-            background-color: rgba(var(--ui-element-base-color-rgb), var(--ui-element-opacity));
-            backdrop-filter: blur(var(--ui-element-backdrop-blur));
-            -webkit-backdrop-filter: blur(var(--ui-element-backdrop-blur)); 
-            border: 1px solid var(--ui-element-border-color);
-        }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
         .modal-overlay.visible { opacity: 1; visibility: visible; } 
         .modal-content { background-color: var(--card-bg-color); padding: 30px; border-radius: var(--card-border-radius); box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); max-width: 600px; width: 90%; transform: translateY(-20px); transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; color: var(--text-color-dark); max-height: 85vh; overflow-y: auto; }
+        .dark-mode .modal-content { border-color: #40444B; }
         .modal-overlay.visible .modal-content { transform: translateY(0); } 
-        .modal-content h3 { margin-top: 0; color: var(--header-gradient-start); font-size: 1.6rem; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .modal-content .settings-section h4 { font-size: 1.2rem; color: var(--card-icon-color); margin-top: 20px; margin-bottom: 15px; }
-        .modal-content .input-group { margin-bottom: 15px; }
-        .modal-content .input-group label, .modal-content .control-row label, .modal-content .control-row .label-like { display: block; margin-bottom: 6px; font-size: 0.95rem; font-weight: 600; }
-        .modal-content input[type="text"], .modal-content input[type="color"], .modal-content input[type="url"], .modal-content input[type="number"], .modal-content textarea, .modal-content input[type="range"], .modal-content select { width: 100%; padding: 10px; margin-bottom: 10px; background-color: var(--input-bg); color: var(--input-text-color); border: 1px solid var(--input-border-color); border-radius: 5px; font-size: 1rem; outline: none; transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; }
-        .modal-content input[type="color"] { padding: 5px; height: 40px; width: 50px; vertical-align: middle; margin-left: 5px;}
-        .modal-content input[type="range"] { padding: 0; accent-color: var(--visualizer-accent-color); } 
-        .modal-content input[type="text"]:focus, .modal-content input[type="color"]:focus, .modal-content input[type="url"]:focus, .modal-content input[type="number"]:focus, .modal-content textarea:focus, .modal-content input[type="range"]:focus, .modal-content select:focus { border-color: var(--card-icon-color); box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--card-icon-color) 25%, transparent); }
+        .modal-content h3 { margin-top: 0; color: var(--section-title-color); font-size: 1.6rem; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; transition: color 0.3s ease, border-color 0.3s ease; }
+        .dark-mode .modal-content h3 { border-bottom-color: #40444B; }
         .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; margin-top: 25px; }
         .modal-buttons button { padding: 10px 18px; font-size: 0.95rem; font-weight: 600; border-radius: 5px; border: none; cursor: pointer; transition: background-color 0.3s ease, transform 0.1s ease; }
         .modal-buttons button:active { transform: scale(0.98); } 
@@ -149,24 +139,6 @@
         .modal-buttons button.primary:hover { background-color: var(--button-primary-hover-bg); }
         .modal-buttons button.cancel { background-color: #6c757d; color: var(--button-primary-text-color); }
         .modal-buttons button.cancel:hover { background-color: #5a6268; }
-        .modal-buttons button.secondary { background-color: #adb5bd; color: var(--text-color-dark); }
-        .modal-buttons button.secondary:hover { background-color: #9098a0; }
-
-        /* Dark Mode Modal Overrides */
-        .dark-mode .modal-content { color: var(--text-color-dark); }
-        .dark-mode .modal-content h3 { color: var(--section-title-color); border-bottom-color: #40444B; }
-        .dark-mode .modal-content .settings-section h4 { color: var(--card-icon-color); }
-
-        .keybind-input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 10px;}
-        .keybind-input-group label { flex-basis: 220px; margin-bottom: 0; }
-        .keybind-input-group input[type="text"] { flex-grow: 1; margin-bottom: 0; }
-
-        .modal-content::-webkit-scrollbar, .modal-content textarea::-webkit-scrollbar { width: 8px; }
-        .modal-content::-webkit-scrollbar-track, .modal-content textarea::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        .modal-content::-webkit-scrollbar-thumb, .modal-content textarea::-webkit-scrollbar-thumb { background: var(--card-icon-color); border-radius: 10px; }
-        .modal-content::-webkit-scrollbar-thumb:hover, .modal-content textarea::-webkit-scrollbar-thumb:hover { background: var(--header-gradient-start); }
-        .dark-mode .modal-content::-webkit-scrollbar-track { background: #2C2F33; }
-
 
         .notification-container { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 12px; z-index: 2000; max-width: 320px; }
         .notification { background-color: var(--header-gradient-start); color: var(--button-primary-text-color); padding: 14px 22px; border-radius: 6px; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); opacity: 0; transform: translateX(100%); animation: slideInFadeIn 0.4s ease-out forwards; }
@@ -174,55 +146,31 @@
         @keyframes slideInFadeIn { to { opacity: 1; transform: translateX(0); } } 
         @keyframes fadeOutRight { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100%); } }
         .notification.fade-out { animation: fadeOutRight 0.4s ease-out forwards; }
-        .dark-mode .notification { background-color: #23272A; color: #FFFFFF; }
-        .dark-mode .notification.error { background-color: var(--danger-color); }
-
-        .range-slider-group { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
-        .range-slider-group label { flex-basis: 200px; margin-bottom: 0; }
-        .range-slider-group input[type="range"] { flex-grow: 1; }
-        .range-slider-group .range-value { min-width: 40px; text-align: right; font-size: 0.9em; }
-        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .checkbox-group input[type="checkbox"] { margin-right: 5px; width: auto; transform: scale(1.1); }
-        
-        /* Styles for Background Visualizer Settings in Modal */
-        .modal-content .control-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; }
-        .modal-content .control-row label, .modal-content .control-row .label-like { margin-bottom: 0; flex-shrink: 0; margin-right: 10px; font-size:0.9rem; }
-        .modal-content .control-row .input-value-pair { display: flex; align-items: center; flex-grow: 1; }
-        .modal-content .control-row .input-value-pair input[type="range"], .modal-content .control-row .input-value-pair select { flex-grow: 1; width: calc(100% - 50px); margin-right: 10px;}
-        .modal-content .control-row .value-display { display: inline-block; min-width: 40px; text-align: right; color: var(--visualizer-accent-color); font-weight: bold; font-size: 0.9rem; }
-        .modal-content .conditional-setting { display: none; width: 100%; padding-left: 20px; margin-top: 8px; border-left: 2px solid var(--visualizer-accent-color); padding-top: 5px; margin-bottom:10px; }
-        .modal-content .conditional-setting.visible { display: block; }
-        .modal-content label.checkbox-label { display: inline; margin-bottom: 0; font-size: 0.9rem; }
-        .modal-content .checkbox-group input[type="checkbox"] { accent-color: var(--visualizer-accent-color); }
 
         @media (max-width: 992px) {
-            .top-header-content h1 { font-size: 1.7rem; } #settings-button { right: 10px; } #settings-button svg { width: 24px; height: 24px; }
+            .top-header-content h1 { font-size: 1.7rem; }
             .tools-title { font-size: 1.6rem; } #program-menu { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
             .modal-content { padding: 20px; max-width: 90%; } .modal-content h3 { font-size: 1.4rem; }
             .modal-buttons { flex-direction: column; gap: 8px; } .modal-buttons button { width: 100%; }
-            .modal-content .control-row { flex-direction: column; align-items: flex-start; }
-            .modal-content .control-row .input-value-pair { width: 100%; }
-            .modal-content .control-row .input-value-pair input[type="range"], .modal-content .control-row .input-value-pair select { width: calc(100% - 50px); }
         }
         @media (max-width: 576px) {
-            .top-header-content h1 { font-size: 1.5rem; } #settings-button { padding: 5px; } #settings-button svg { width: 22px; height: 22px; }
+            .top-header-content h1 { font-size: 1.5rem; }
             .tools-title { font-size: 1.4rem; }
             #program-menu { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
             .program-item { padding: 15px 10px; min-height: 120px; } .program-item .item-icon { font-size: 2rem; margin-bottom: 8px;} .program-item .item-title { font-size: 0.9rem; }
-            .keybind-input-group { flex-direction: column; align-items: flex-start; } .keybind-input-group label { flex-basis: auto; }
-            .range-slider-group { flex-direction: column; align-items: flex-start; } .range-slider-group label { flex-basis: auto; margin-bottom: 5px; }
         }
     </style>
 </head>
-<body class=""> 
+<body> 
     <canvas id="particleCanvas"></canvas>
     <div class="area" id="floatingBoxesArea"><ul class="circles" id="floatingBoxesList"></ul></div>
 
     <div class="top-header-wrapper">
         <div class="top-header-content">
             <h1>Azure DevOps Insights Tool</h1>
-            <button id="settings-button" aria-label="Open Settings">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24-.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49 1c.52.4 1.08.73 1.69-.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+            <button id="dark-mode-toggle" aria-label="Toggle Dark Mode">
+                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.64 5.64c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L5.64 5.64zm12.73 12.73c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.41-1.41zM5.64 18.36c.39.39.39 1.02 0 1.41-.39.39-1.02.39-1.41 0l-1.41-1.41c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l1.41 1.41zm12.73-12.73c.39.39.39 1.02 0 1.41-.39.39-1.02.39-1.41 0l-1.41-1.41c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l1.41 1.41z"/></svg>
+                <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12.3 4.9c.4-.2.6-.7.4-1.1-.2-.4-.7-.6-1.1-.4C7.8 4.8 5 8.3 5 12.5c0 4.4 3.6 8 8 8 3.7 0 6.8-2.5 7.8-6c.2-.4 0-.9-.4-1.1s-.9 0-1.1.4c-.8 2.3-3 4-5.4 4-3.3 0-6-2.7-6-6 0-2.9 2.1-5.4 5-5.9z"/></svg>
             </button>
         </div>
     </div>
@@ -244,118 +192,6 @@
         </div>
     </div>
 
-    <div id="settings-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Settings</h3>
-            
-            <div class="settings-section">
-                <h4>Theme Customization (Header)</h4>
-                <div class="input-group">
-                    <label for="header-gradient-start-input">Header Gradient Start:</label>
-                    <input type="color" id="header-gradient-start-input">
-                </div>
-                <div class="input-group">
-                    <label for="header-gradient-end-input">Header Gradient End:</label>
-                    <input type="color" id="header-gradient-end-input">
-                </div>
-                <div class="input-group">
-                    <label for="header-gradient-angle-input">Header Gradient Angle (degrees):</label>
-                    <input type="number" id="header-gradient-angle-input" min="0" max="360" step="1">
-                </div>
-                </div>
-
-            <div class="settings-section">
-                <h4>Appearance Settings (UI)</h4>
-                 <div class="checkbox-group">
-                    <input type="checkbox" id="dark-mode-toggle">
-                    <label for="dark-mode-toggle">Enable Dark Mode</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="enable-translucency-input">
-                    <label for="enable-translucency-input">Enable Translucent UI Elements</label>
-                </div>
-                <div class="input-group">
-                    <label for="ui-element-base-color-input">UI Element Base Color (for translucency):</label>
-                    <input type="color" id="ui-element-base-color-input">
-                </div>
-                <div class="range-slider-group">
-                    <label for="ui-element-opacity-input">UI Element Opacity:</label>
-                    <input type="range" id="ui-element-opacity-input" min="0.1" max="1" step="0.01">
-                    <span class="range-value" id="ui-element-opacity-value">1.0</span>
-                </div>
-                <div class="range-slider-group">
-                    <label for="ui-element-backdrop-blur-input">UI Element Backdrop Blur:</label>
-                    <input type="range" id="ui-element-backdrop-blur-input" min="0" max="20" step="1">
-                    <span class="range-value" id="ui-element-backdrop-blur-value">0px</span>
-                </div>
-            </div>
-            
-            <div class="settings-section" id="background-visualizer-settings">
-                <h4>Background Visualizer</h4>
-                <h5>Particle Effect</h5>
-                <div class="control-row"><label for="particleCount">Count:</label><div class="input-value-pair"><input type="range" id="particleCount"><span id="particleCountValue" class="value-display"></span></div></div>
-                <div class="control-row"><label for="particleSpeed">Speed:</label><div class="input-value-pair"><input type="range" id="particleSpeed" step="0.1"><span id="particleSpeedValue" class="value-display"></span></div></div>
-                <div class="control-row"><label for="particleSize">Max Size:</label><div class="input-value-pair"><input type="range" id="particleSize" step="0.5"><span id="particleSizeValue" class="value-display"></span></div></div>
-                <div class="control-row"><label for="particleColorScheme">Color Scheme:</label><div class="input-value-pair"><select id="particleColorScheme"><option value="vibrant">Vibrant (Purple/Orange)</option><option value="cool">Cool Tones (Blues/Cyans)</option><option value="warm">Warm Tones (Reds/Oranges)</option><option value="forest">Forest Tones (Greens/Browns)</option><option value="monochrome_particles">Monochrome (Grays/White)</option></select></div></div>
-                <div class="control-row checkbox-group"><input type="checkbox" id="showLines"><label for="showLines" class="checkbox-label">Show Lines</label></div>
-                <div class="control-row"><label for="lineDistance">Line Max Dist:</label><div class="input-value-pair"><input type="range" id="lineDistance"><span id="lineDistanceValue" class="value-display"></span></div></div>
-                <div class="control-row checkbox-group"><input type="checkbox" id="wrapParticles"><label for="wrapParticles" class="checkbox-label">Wrap Particles at Edges</label></div>
-                
-                <h5>Mouse Interaction (Particles)</h5>
-                <div class="control-row checkbox-group"><input type="checkbox" id="mouseRepel"><label for="mouseRepel" class="checkbox-label">Repel Particles</label></div>
-                <div class="control-row"><label for="mouseRadius">Repel Radius:</label><div class="input-value-pair"><input type="range" id="mouseRadius"><span id="mouseRadiusValue" class="value-display"></span></div></div>
-
-                <hr style="margin: 20px 0;">
-                <h5>Floating Boxes Effect</h5>
-                <div class="control-row checkbox-group"><input type="checkbox" id="toggleFloatingBoxes"><label for="toggleFloatingBoxes" class="checkbox-label">Enable Floating Boxes</label></div>
-                <div class="control-row"><label for="boxCount">Count:</label><div class="input-value-pair"><input type="range" id="boxCount"><span id="boxCountValue" class="value-display"></span></div></div>
-                <div class="control-row"><label for="maxBoxSize">Max Size:</label><div class="input-value-pair"><input type="range" id="maxBoxSize"><span id="maxBoxSizeValue" class="value-display"></span></div></div>
-                <div class="control-row"><label for="boxOpacity">Opacity:</label><div class="input-value-pair"><input type="range" id="boxOpacity" step="0.05"><span id="boxOpacityValue" class="value-display"></span></div></div>
-                <div class="control-row"><label for="boxAnimationScale">Anim. Speed:</label><div class="input-value-pair"><input type="range" id="boxAnimationScale" step="0.1"><span id="boxAnimationScaleValue" class="value-display"></span></div></div>
-                <div class="control-row"><label for="boxColorMode">Color Mode:</label><div class="input-value-pair"><select id="boxColorMode"><option value="theme_boxes">Theme Mix (Purple/Orange)</option><option value="monochrome_boxes">Monochrome</option><option value="solid_custom">Custom Solid</option><option value="gradient_custom">Custom Gradient</option></select></div></div>
-                <div id="boxSolidColorControls" class="conditional-setting"><div class="control-row"><label for="boxSolidColor1" class="inline-label">Solid Color:</label><input type="color" id="boxSolidColor1"></div></div>
-                <div id="boxGradientControls" class="conditional-setting">
-                    <div class="control-row"><label for="boxGradientColor1" class="inline-label">Gradient Start:</label><input type="color" id="boxGradientColor1"></div>
-                    <div class="control-row"><label for="boxGradientColor2" class="inline-label">Gradient End:</label><input type="color" id="boxGradientColor2"></div>
-                    <div class="control-row"><label for="boxGradientDirection">Direction:</label><div class="input-value-pair"><select id="boxGradientDirection"><option value="to right">To Right</option><option value="to left">To Left</option><option value="to bottom">To Bottom</option><option value="to top">To Top</option><option value="to bottom right">To Bottom Right</option><option value="to top left">To Top Left</option><option value="45deg">Diagonal (45deg)</option><option value="-45deg">Diagonal (-45deg)</option></select></div></div>
-                </div>
-                <div class="control-row checkbox-group"><input type="checkbox" id="boxShadowsEnabled"><label for="boxShadowsEnabled" class="checkbox-label">Shadows</label></div>
-                <div class="control-row checkbox-group"><input type="checkbox" id="boxBorderEnabled"><label for="boxBorderEnabled" class="checkbox-label">Border</label></div>
-                <div id="boxBorderControls" class="conditional-setting">
-                    <div class="control-row"><label for="boxBorderWidth">Border Width:</label><div class="input-value-pair"><input type="range" id="boxBorderWidth"><span id="boxBorderWidthValue" class="value-display"></span></div></div>
-                    <div class="control-row"><label for="boxBorderColor" class="inline-label">Border Color:</label><input type="color" id="boxBorderColor"></div>
-                </div>
-                <div class="modal-buttons" style="justify-content: flex-start; margin-top: 15px;">
-                    <button id="resetParticleSettingsBtn" class="secondary">Reset Particles</button>
-                    <button id="resetBoxSettingsBtn" class="secondary">Reset Boxes</button>
-                </div>
-            </div>
-
-            <div class="settings-section"> <div class="modal-buttons" style="margin-top:10px;">
-                    <button id="apply-appearance-btn" class="primary">Apply All Appearance</button>
-                    <button id="reset-appearance-btn" class="secondary">Reset All Appearance</button>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h4>Keybinds</h4>
-                <p style="font-size: 0.85rem; opacity: 0.8; margin-bottom:15px;">
-                    Define keyboard shortcuts. Use keys like 'N', '1', or with modifiers: 'Alt+1', 'Control+S'.
-                </p>
-                <h5>Global & Tool Launching</h5>
-                <div class="keybind-input-group"><label for="keybind-param-extractor">Parameter Extractor:</label><input type="text" id="keybind-param-extractor" placeholder="e.g., Alt+1"></div>
-                <div class="keybind-input-group"><label for="keybind-batch-calculator">Batch Count Calculator:</label><input type="text" id="keybind-batch-calculator" placeholder="e.g., Alt+2"></div>
-                <div class="keybind-input-group"><label for="keybind-csv-to-json">CSV to JSON Processor:</label><input type="text" id="keybind-csv-to-json" placeholder="e.g., Alt+3"></div>
-                <div class="keybind-input-group"><label for="keybind-tool4">Tool 4 (Future):</label><input type="text" id="keybind-tool4" placeholder="e.g., Alt+4"></div>
-                <div class="keybind-input-group"><label for="keybind-tool5">Tool 5 (Future):</label><input type="text" id="keybind-tool5" placeholder="e.g., Alt+5"></div>
-                <div class="keybind-input-group"><label for="keybind-open-settings">Open Settings:</label><input type="text" id="keybind-open-settings" placeholder="e.g., Alt+O"></div>
-                <div class="modal-buttons"><button id="save-keybinds-btn" class="primary">Save Keybinds</button><button id="reset-keybinds-btn" class="secondary">Reset Keybinds</button></div>
-            </div>
-            
-            <div class="modal-buttons" style="margin-top: 30px;"><button class="cancel" id="close-settings-btn">Close Settings</button></div>
-        </div>
-    </div>
-
     <div id="notification-container" class="notification-container"></div>
 
     <script>
@@ -366,76 +202,20 @@
         const batchCountHighestBtn = document.getElementById('batch-count-highest-btn');
         const batchCountNearestBtn = document.getElementById('batch-count-nearest-btn');
         const cancelBatchCountBtn = document.getElementById('cancel-batch-count-btn');
-        const settingsButton = document.getElementById('settings-button');
-        const settingsModal = document.getElementById('settings-modal');
-        const closeSettingsBtn = document.getElementById('close-settings-btn');
-        
-        // Appearance Settings DOM Elements
         const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const headerGradientStartInput = document.getElementById('header-gradient-start-input');
-        const headerGradientEndInput = document.getElementById('header-gradient-end-input');
-        const headerGradientAngleInput = document.getElementById('header-gradient-angle-input');
-        const enableTranslucencyInput = document.getElementById('enable-translucency-input');
-        const uiElementBaseColorInput = document.getElementById('ui-element-base-color-input');
-        const uiElementOpacityInput = document.getElementById('ui-element-opacity-input');
-        const uiElementOpacityValueDisplay = document.getElementById('ui-element-opacity-value');
-        const uiElementBackdropBlurInput = document.getElementById('ui-element-backdrop-blur-input');
-        const uiElementBackdropBlurValueDisplay = document.getElementById('ui-element-backdrop-blur-value');
-        const applyAppearanceBtn = document.getElementById('apply-appearance-btn');
-        const resetAppearanceBtn = document.getElementById('reset-appearance-btn');
         
-        // Keybinds DOM Elements
-        const keybindParamExtractorInput = document.getElementById('keybind-param-extractor');
-        const keybindBatchCalculatorInput = document.getElementById('keybind-batch-calculator'); 
-        const keybindCsvToJsonInput = document.getElementById('keybind-csv-to-json');
-        const keybindTool4Input = document.getElementById('keybind-tool4');
-        const keybindTool5Input = document.getElementById('keybind-tool5');
-        const keybindOpenSettingsInput = document.getElementById('keybind-open-settings');
-        const saveKeybindsBtn = document.getElementById('save-keybinds-btn');
-        const resetKeybindsBtn = document.getElementById('reset-keybinds-btn');
-
         // --- Background Visualizer DOM Elements ---
         const particleCanvas = document.getElementById('particleCanvas');
         const ctx = particleCanvas.getContext('2d');
         const floatingBoxesArea = document.getElementById('floatingBoxesArea');
         const floatingBoxesList = document.getElementById('floatingBoxesList');
 
-        const visControls = {
-            particleCountSlider: document.getElementById('particleCount'), particleCountValue: document.getElementById('particleCountValue'),
-            particleSpeedSlider: document.getElementById('particleSpeed'), particleSpeedValue: document.getElementById('particleSpeedValue'),
-            particleSizeSlider: document.getElementById('particleSize'), particleSizeValue: document.getElementById('particleSizeValue'),
-            particleColorSchemeSelect: document.getElementById('particleColorScheme'),
-            showLinesCheckbox: document.getElementById('showLines'),
-            lineDistanceSlider: document.getElementById('lineDistance'), lineDistanceValue: document.getElementById('lineDistanceValue'),
-            wrapParticlesCheckbox: document.getElementById('wrapParticles'),
-            mouseRepelCheckbox: document.getElementById('mouseRepel'),
-            mouseRadiusSlider: document.getElementById('mouseRadius'), mouseRadiusValue: document.getElementById('mouseRadiusValue'),
-            toggleFloatingBoxesCheckbox: document.getElementById('toggleFloatingBoxes'),
-            boxCountSlider: document.getElementById('boxCount'), boxCountValue: document.getElementById('boxCountValue'),
-            maxBoxSizeSlider: document.getElementById('maxBoxSize'), maxBoxSizeValue: document.getElementById('maxBoxSizeValue'),
-            boxOpacitySlider: document.getElementById('boxOpacity'), boxOpacityValue: document.getElementById('boxOpacityValue'),
-            boxAnimationScaleSlider: document.getElementById('boxAnimationScale'), boxAnimationScaleValue: document.getElementById('boxAnimationScaleValue'),
-            boxColorModeSelect: document.getElementById('boxColorMode'),
-            boxSolidColorControlsDiv: document.getElementById('boxSolidColorControls'), boxSolidColor1Input: document.getElementById('boxSolidColor1'),
-            boxGradientControlsDiv: document.getElementById('boxGradientControls'),
-            boxGradientColor1Input: document.getElementById('boxGradientColor1'), boxGradientColor2Input: document.getElementById('boxGradientColor2'),
-            boxGradientDirectionSelect: document.getElementById('boxGradientDirection'),
-            boxShadowsCheckbox: document.getElementById('boxShadowsEnabled'),
-            boxBorderEnabledCheckbox: document.getElementById('boxBorderEnabled'),
-            boxBorderControlsDiv: document.getElementById('boxBorderControls'),
-            boxBorderWidthSlider: document.getElementById('boxBorderWidth'), boxBorderWidthValue: document.getElementById('boxBorderWidthValue'),
-            boxBorderColorInput: document.getElementById('boxBorderColor'),
-            resetParticleSettingsBtn: document.getElementById('resetParticleSettingsBtn'),
-            resetBoxSettingsBtn: document.getElementById('resetBoxSettingsBtn')
-        };
-
         // --- State and Constants ---
-        const APPEARANCE_STORAGE_KEY = 'adoInsightsToolAppearance_v4_darkmode'; // Incremented version
-        const KEYBINDS_STORAGE_KEY = 'adoInsightsToolKeybinds_v3_no_notes';
         const NOTIFICATION_FADE_DURATION = 400;
+        const DARK_MODE_STORAGE_KEY = 'adoInsightsToolDarkMode_v1';
 
         // --- Background Visualizer Default Settings & Data ---
-        const defaultBackgroundVisualizerSettings = {
+        const visualizerSettings = {
             particleCount: 150, particleSpeedFactor: 0.5, maxParticleSize: 3.0, particleColorScheme: 'vibrant', showLines: true, lineMaxDistance: 80, wrapParticles: true,
             mouseRepelEnabled: true, mouseRepelRadius: 100,
             floatingBoxesEnabled: true, boxCount: 15, minBoxSize: 20, maxBoxSize: 120, boxOpacity: 0.4, boxAnimationScale: 1.0, boxColorMode: 'gradient_custom', boxSolidColor1: '#6A0DAD', boxGradientColor1: '#9600ff', boxGradientColor2: '#ffc864', boxGradientDirection: '45deg', boxShadowsEnabled: true, boxBorderEnabled: false, boxBorderWidth: 2, boxBorderColor: '#FFFFFF',
@@ -448,32 +228,12 @@
         const mouseForParticles = { x: null, y: null, radius: 100 };
         let animationFrameIdVisualizer;
 
-
-        const DEFAULT_APPEARANCE = {
-            darkMode: false,
-            headerGradientStart: '#4A0082', headerGradientEnd: '#D4529D', headerGradientAngle: 105,
-            enableTranslucency: false,
-            uiElementBaseColor: '#FFFFFF', uiElementOpacity: 0.85, uiElementBackdropBlur: 5,
-            backgroundVisualizer: { ...defaultBackgroundVisualizerSettings }
-        };
-        let currentAppearanceSettings = JSON.parse(JSON.stringify(DEFAULT_APPEARANCE)); // Deep copy
-
-        const DEFAULT_KEYBINDS = { 
-            paramExtractor: 'Alt+1', 
-            batchCalculator: 'Alt+2', 
-            csvToJson: 'Alt+3',
-            tool4: 'Alt+4', 
-            tool5: 'Alt+5', 
-            openSettings: 'Alt+O', 
-        };
-        let currentKeybinds = { ...DEFAULT_KEYBINDS };
-
         const programs = [ 
-            { id: 'parameter-extractor', name: 'Parameter Extractor', icon: '🛠️', description: "Extracts URL parameters from various Azure Function JSON payloads.", file: 'Tools/parameter_tool.html', keybindAction: 'paramExtractor' }, 
-            { id: 'batch-count-calculator', name: 'Batch Count Calculator', icon: '🧮', description: "Calculate batch sizes. Opens options modal.", modal: batchCountModal, keybindAction: 'batchCalculator' }, 
-            { id: 'csv-to-json-processor', name: 'CSV to JSON Processor', icon: '📄', description: "Filters CSV data and converts it to structured JSON.", file: 'csv-to-json-tool/', keybindAction: 'csvToJson'},
-            { id: 'tool-4', name: 'Tool 4 (Future)', icon: '⚙️', description: "This tool isn't implemented yet.", file: '#', keybindAction: 'tool4'}, 
-            { id: 'tool-5', name: 'Tool 5 (Future)', icon: '⚙️', description: "This tool isn't implemented yet.", file: '#', keybindAction: 'tool5'} 
+            { id: 'parameter-extractor', name: 'Parameter Extractor', icon: '🛠️', description: "Extracts URL parameters from various Azure Function JSON payloads.", file: 'Tools/parameter_tool.html' }, 
+            { id: 'batch-count-calculator', name: 'Batch Count Calculator', icon: '🧮', description: "Calculate batch sizes. Opens options modal.", modal: batchCountModal }, 
+            { id: 'csv-to-json-processor', name: 'CSV to JSON Processor', icon: '📄', description: "Filters CSV data and converts it to structured JSON.", file: 'csv-to-json-tool/'},
+            { id: 'tool-4', name: 'Tool 4 (Future)', icon: '⚙️', description: "This tool isn't implemented yet.", file: '#'}, 
+            { id: 'tool-5', name: 'Tool 5 (Future)', icon: '⚙️', description: "This tool isn't implemented yet.", file: '#'} 
         ];
         
         function createProgramCard(item) { const isLink = item.file && item.file !== '#'; const card = document.createElement(isLink ? 'a' : 'div'); card.className = 'program-item'; card.id = `${item.id}-card`; let fullDesc = item.description; if (isLink) { card.href = item.file; card.target = '_blank'; card.rel = 'noopener noreferrer'; fullDesc = `Launches the ${item.name}. ${item.description}`; } else if (item.modal) { card.addEventListener('click', () => showModal(item.modal)); fullDesc = `Opens the ${item.name}. ${item.description}`; } else if (item.file === '#') { card.style.cursor = 'not-allowed'; card.addEventListener('click', (e) => { e.preventDefault(); showNotification(`"${item.name}" is not yet implemented.`, 3000, 'info'); }); } card.innerHTML = `<span class="item-icon">${item.icon || '⭐'}</span><span class="item-title">${item.name}</span>`; card.addEventListener('mouseover', () => { programExplanation.textContent = fullDesc; programExplanation.classList.add('active'); }); card.addEventListener('mouseout', () => { programExplanation.innerHTML = '<p>Hover over a program card above to see its explanation here.</p>'; programExplanation.classList.remove('active'); }); return card; }
@@ -485,44 +245,41 @@
         const boxBackgroundFunctions = {
             'theme_boxes': (i) => (i % 2 === 0) ? 'rgb(106, 13, 173)' : 'rgb(255, 165, 0)',
             'monochrome_boxes': () => { const gray = Math.floor(Math.random() * 55) + 200; return `rgb(${gray},${gray},${gray})`; },
-            'solid_custom': () => currentAppearanceSettings.backgroundVisualizer.boxSolidColor1,
-            'gradient_custom': () => `linear-gradient(${currentAppearanceSettings.backgroundVisualizer.boxGradientDirection}, ${currentAppearanceSettings.backgroundVisualizer.boxGradientColor1}, ${currentAppearanceSettings.backgroundVisualizer.boxGradientColor2})`
+            'solid_custom': () => visualizerSettings.boxSolidColor1,
+            'gradient_custom': () => `linear-gradient(${visualizerSettings.boxGradientDirection}, ${visualizerSettings.boxGradientColor1}, ${visualizerSettings.boxGradientColor2})`
         };
 
         class Particle { 
             constructor(x, y, dX, dY, size, color) { this.x = x; this.y = y; this.dX = dX; this.dY = dY; this.size = size; this.color = color;}
             draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.fill(); }
             update() {
-                const visSettings = currentAppearanceSettings.backgroundVisualizer;
-                if (visSettings.wrapParticles) {
+                if (visualizerSettings.wrapParticles) {
                     if (this.x > particleCanvas.width + this.size) this.x = -this.size; else if (this.x < -this.size) this.x = particleCanvas.width + this.size;
                     if (this.y > particleCanvas.height + this.size) this.y = -this.size; else if (this.y < -this.size) this.y = particleCanvas.height + this.size;
                 } else {
                     if (this.x + this.size > particleCanvas.width || this.x - this.size < 0) this.dX *= -1;
                     if (this.y + this.size > particleCanvas.height || this.y - this.size < 0) this.dY *= -1;
                 }
-                if (visSettings.mouseRepelEnabled && mouseForParticles.x !== undefined && mouseForParticles.y !== undefined) {
+                if (visualizerSettings.mouseRepelEnabled && mouseForParticles.x !== undefined && mouseForParticles.y !== undefined) {
                     let dx = mouseForParticles.x - this.x; let dy = mouseForParticles.y - this.y; let dist = Math.sqrt(dx * dx + dy * dy);
                     if (dist < mouseForParticles.radius) { let fdx=dx/dist, fdy=dy/dist, force=(mouseForParticles.radius-dist)/mouseForParticles.radius; this.x -= fdx*force*5; this.y -= fdy*force*5; }
                 }
-                this.x += this.dX * visSettings.particleSpeedFactor; this.y += this.dY * visSettings.particleSpeedFactor; this.draw();
+                this.x += this.dX * visualizerSettings.particleSpeedFactor; this.y += this.dY * visualizerSettings.particleSpeedFactor; this.draw();
             }
         }
         function initParticles() {
             particlesArray = []; 
-            const visSettings = currentAppearanceSettings.backgroundVisualizer;
-            const palette = particleColorPalettes[visSettings.particleColorScheme] || particleColorPalettes.vibrant;
-            for (let i = 0; i < visSettings.particleCount; i++) {
-                let size = Math.random() * visSettings.maxParticleSize + 1;
+            const palette = particleColorPalettes[visualizerSettings.particleColorScheme] || particleColorPalettes.vibrant;
+            for (let i = 0; i < visualizerSettings.particleCount; i++) {
+                let size = Math.random() * visualizerSettings.maxParticleSize + 1;
                 let x = Math.random() * (particleCanvas.width - size * 2) + size, y = Math.random() * (particleCanvas.height - size * 2) + size;
                 let dX = (Math.random()*2-1), dY = (Math.random()*2-1), color = palette[Math.floor(Math.random()*palette.length)];
                 particlesArray.push(new Particle(x, y, dX, dY, size, color));
             }
         }
         function connectParticles() {
-            const visSettings = currentAppearanceSettings.backgroundVisualizer;
-            if (!visSettings.showLines) return;
-            const lineColorPalette = particleColorPalettes[visSettings.particleColorScheme] || particleColorPalettes.vibrant;
+            if (!visualizerSettings.showLines) return;
+            const lineColorPalette = particleColorPalettes[visualizerSettings.particleColorScheme] || particleColorPalettes.vibrant;
             const baseLineColorHex = lineColorPalette[0] || '#6A0DAD'; 
             const rgb = hexToRgb(baseLineColorHex);
             if (!rgb) return;
@@ -533,8 +290,8 @@
                     let dx = particlesArray[a].x - particlesArray[b_loop].x;
                     let dy = particlesArray[a].y - particlesArray[b_loop].y;
                     let dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < visSettings.lineMaxDistance) {
-                        let opacity = 1 - (dist / visSettings.lineMaxDistance);
+                    if (dist < visualizerSettings.lineMaxDistance) {
+                        let opacity = 1 - (dist / visualizerSettings.lineMaxDistance);
                         ctx.strokeStyle = `rgba(${r},${g},${b_val}, ${opacity*0.5})`;
                         ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(particlesArray[a].x, particlesArray[a].y); ctx.lineTo(particlesArray[b_loop].x, particlesArray[b_loop].y); ctx.stroke();
                     }
@@ -543,23 +300,22 @@
         }
         function generateFloatingBoxes() {
             floatingBoxesList.innerHTML = ''; 
-            const visSettings = currentAppearanceSettings.backgroundVisualizer;
-            if (!visSettings.floatingBoxesEnabled) {
+            if (!visualizerSettings.floatingBoxesEnabled) {
                 floatingBoxesArea.style.display = 'none';
                 return;
             }
             floatingBoxesArea.style.display = 'block';
             const baseDuration = 25;
-            for (let i = 0; i < visSettings.boxCount; i++) {
+            for (let i = 0; i < visualizerSettings.boxCount; i++) {
                 const li = document.createElement('li');
-                const size = Math.random() * (visSettings.maxBoxSize - visSettings.minBoxSize) + visSettings.minBoxSize;
+                const size = Math.random() * (visualizerSettings.maxBoxSize - visualizerSettings.minBoxSize) + visualizerSettings.minBoxSize;
                 Object.assign(li.style, {
-                    width: `${size}px`, height: `${size}px`, left: `${Math.random() * 90}%`, opacity: visSettings.boxOpacity,
-                    background: (boxBackgroundFunctions[visSettings.boxColorMode] || boxBackgroundFunctions['theme_boxes'])(i),
-                    animationDuration: `${(Math.random() * 10 + (baseDuration - 5)) / visSettings.boxAnimationScale}s`,
-                    animationDelay: `${Math.random() * baseDuration / visSettings.boxAnimationScale}s`,
-                    boxShadow: visSettings.boxShadowsEnabled ? `3px 3px 10px rgba(0, 0, 0, ${visSettings.boxOpacity > 0.5 ? 0.2 : 0.15})` : 'none',
-                    border: visSettings.boxBorderEnabled ? `${visSettings.boxBorderWidth}px solid ${visSettings.boxBorderColor}` : 'none'
+                    width: `${size}px`, height: `${size}px`, left: `${Math.random() * 90}%`, opacity: visualizerSettings.boxOpacity,
+                    background: (boxBackgroundFunctions[visualizerSettings.boxColorMode] || boxBackgroundFunctions['theme_boxes'])(i),
+                    animationDuration: `${(Math.random() * 10 + (baseDuration - 5)) / visualizerSettings.boxAnimationScale}s`,
+                    animationDelay: `${Math.random() * baseDuration / visualizerSettings.boxAnimationScale}s`,
+                    boxShadow: visualizerSettings.boxShadowsEnabled ? `3px 3px 10px rgba(0, 0, 0, ${visualizerSettings.boxOpacity > 0.5 ? 0.2 : 0.15})` : 'none',
+                    border: visualizerSettings.boxBorderEnabled ? `${visualizerSettings.boxBorderWidth}px solid ${visualizerSettings.boxBorderColor}` : 'none'
                 });
                 floatingBoxesList.appendChild(li);
             }
@@ -581,171 +337,6 @@
             animateVisualizer();
         }
 
-        // --- Settings Management for Appearance & Visualizer ---
-        function getControlValue(control) {
-            if (!control) return undefined;
-            if (control.type === 'checkbox') return control.checked;
-            if (control.type === 'range' || control.type === 'number') return parseFloat(control.value);
-            return control.value;
-        };
-
-        function updateBackgroundVisualizerUIFromSettings() {
-            const visSettings = currentAppearanceSettings.backgroundVisualizer;
-            visControls.particleCountSlider.value = visSettings.particleCount; visControls.particleCountValue.textContent = visSettings.particleCount;
-            visControls.particleSpeedSlider.value = visSettings.particleSpeedFactor; visControls.particleSpeedValue.textContent = visSettings.particleSpeedFactor.toFixed(1);
-            visControls.particleSizeSlider.value = visSettings.maxParticleSize; visControls.particleSizeValue.textContent = visSettings.maxParticleSize.toFixed(1);
-            visControls.particleColorSchemeSelect.value = visSettings.particleColorScheme;
-            visControls.showLinesCheckbox.checked = visSettings.showLines;
-            visControls.lineDistanceSlider.value = visSettings.lineMaxDistance; visControls.lineDistanceValue.textContent = visSettings.lineMaxDistance;
-            visControls.wrapParticlesCheckbox.checked = visSettings.wrapParticles;
-            visControls.mouseRepelCheckbox.checked = visSettings.mouseRepelEnabled;
-            visControls.mouseRadiusSlider.value = visSettings.mouseRepelRadius; visControls.mouseRadiusValue.textContent = visSettings.mouseRepelRadius;
-            
-            visControls.toggleFloatingBoxesCheckbox.checked = visSettings.floatingBoxesEnabled;
-            visControls.boxCountSlider.value = visSettings.boxCount; visControls.boxCountValue.textContent = visSettings.boxCount;
-            visControls.maxBoxSizeSlider.value = visSettings.maxBoxSize; visControls.maxBoxSizeValue.textContent = visSettings.maxBoxSize;
-            visControls.boxOpacitySlider.value = visSettings.boxOpacity; visControls.boxOpacityValue.textContent = visSettings.boxOpacity.toFixed(2);
-            visControls.boxAnimationScaleSlider.value = visSettings.boxAnimationScale; visControls.boxAnimationScaleValue.textContent = visSettings.boxAnimationScale.toFixed(1);
-            visControls.boxColorModeSelect.value = visSettings.boxColorMode;
-            visControls.boxSolidColor1Input.value = visSettings.boxSolidColor1;
-            visControls.boxGradientColor1Input.value = visSettings.boxGradientColor1;
-            visControls.boxGradientColor2Input.value = visSettings.boxGradientColor2;
-            visControls.boxGradientDirectionSelect.value = visSettings.boxGradientDirection;
-            visControls.boxShadowsCheckbox.checked = visSettings.boxShadowsEnabled;
-            visControls.boxBorderEnabledCheckbox.checked = visSettings.boxBorderEnabled;
-            visControls.boxBorderWidthSlider.value = visSettings.boxBorderWidth; visControls.boxBorderWidthValue.textContent = visSettings.boxBorderWidth;
-            visControls.boxBorderColorInput.value = visSettings.boxBorderColor;
-
-            visControls.boxSolidColorControlsDiv.classList.toggle('visible', visSettings.boxColorMode === 'solid_custom');
-            visControls.boxGradientControlsDiv.classList.toggle('visible', visSettings.boxColorMode === 'gradient_custom');
-            visControls.boxBorderControlsDiv.classList.toggle('visible', visSettings.boxBorderEnabled);
-        }
-
-        function collectBackgroundVisualizerSettingsFromUI() {
-            const visSettings = currentAppearanceSettings.backgroundVisualizer; // Modify in place
-            visSettings.particleCount = getControlValue(visControls.particleCountSlider);
-            visSettings.particleSpeedFactor = getControlValue(visControls.particleSpeedSlider);
-            visSettings.maxParticleSize = getControlValue(visControls.particleSizeSlider);
-            visSettings.particleColorScheme = getControlValue(visControls.particleColorSchemeSelect);
-            visSettings.showLines = getControlValue(visControls.showLinesCheckbox);
-            visSettings.lineMaxDistance = getControlValue(visControls.lineDistanceSlider);
-            visSettings.wrapParticles = getControlValue(visControls.wrapParticlesCheckbox);
-            visSettings.mouseRepelEnabled = getControlValue(visControls.mouseRepelCheckbox);
-            visSettings.mouseRepelRadius = getControlValue(visControls.mouseRadiusSlider);
-            
-            visSettings.floatingBoxesEnabled = getControlValue(visControls.toggleFloatingBoxesCheckbox);
-            visSettings.boxCount = getControlValue(visControls.boxCountSlider);
-            visSettings.maxBoxSize = getControlValue(visControls.maxBoxSizeSlider);
-            visSettings.boxOpacity = getControlValue(visControls.boxOpacitySlider);
-            visSettings.boxAnimationScale = getControlValue(visControls.boxAnimationScaleSlider);
-            visSettings.boxColorMode = getControlValue(visControls.boxColorModeSelect);
-            visSettings.boxSolidColor1 = getControlValue(visControls.boxSolidColor1Input);
-            visSettings.boxGradientColor1 = getControlValue(visControls.boxGradientColor1Input);
-            visSettings.boxGradientColor2 = getControlValue(visControls.boxGradientColor2Input);
-            visSettings.boxGradientDirection = getControlValue(visControls.boxGradientDirectionSelect);
-            visSettings.boxShadowsEnabled = getControlValue(visControls.boxShadowsCheckbox);
-            visSettings.boxBorderEnabled = getControlValue(visControls.boxBorderEnabledCheckbox);
-            visSettings.boxBorderWidth = getControlValue(visControls.boxBorderWidthSlider);
-            visSettings.boxBorderColor = getControlValue(visControls.boxBorderColorInput);
-            
-            mouseForParticles.radius = visSettings.mouseRepelRadius;
-        }
-        
-        function applyAppearanceSettings(settings, source = "manual") {
-            const root = document.documentElement;
-
-            // Dark Mode
-            if (settings.darkMode) {
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
-            }
-
-            root.style.setProperty('--header-gradient-start', settings.headerGradientStart);
-            root.style.setProperty('--header-gradient-end', settings.headerGradientEnd);
-            root.style.setProperty('--header-gradient-angle', `${settings.headerGradientAngle}deg`);
-
-            if (settings.enableTranslucency) {
-                document.body.classList.add('translucent-ui');
-                const rgbArray = hexToRgb(settings.uiElementBaseColor);
-                if (rgbArray) {
-                    root.style.setProperty('--ui-element-base-color-rgb', rgbArray.join(', '));
-                } else { 
-                    const defaultRgbArray = hexToRgb(DEFAULT_APPEARANCE.uiElementBaseColor);
-                    if (defaultRgbArray) root.style.setProperty('--ui-element-base-color-rgb', defaultRgbArray.join(', '));
-                }
-                root.style.setProperty('--ui-element-opacity', settings.uiElementOpacity.toString());
-                root.style.setProperty('--ui-element-backdrop-blur', `${settings.uiElementBackdropBlur}px`);
-            } else {
-                document.body.classList.remove('translucent-ui');
-            }
-            
-            if (source === "manual" || source === "init" || source === "reset") {
-                if (source === "manual") collectBackgroundVisualizerSettingsFromUI();
-                updateBackgroundVisualizerUIFromSettings(); 
-                startOrRestartVisualizer();
-            } else if (source === "resize") {
-                startOrRestartVisualizer();
-            }
-        }
-
-        function saveAppearanceSettingsToStorage(settings) { localStorage.setItem(APPEARANCE_STORAGE_KEY, JSON.stringify(settings)); }
-        
-        function loadAppearanceSettingsFromStorage() {
-            const storedSettings = localStorage.getItem(APPEARANCE_STORAGE_KEY);
-            if (storedSettings) {
-                try {
-                    const parsed = JSON.parse(storedSettings);
-                    currentAppearanceSettings = {
-                        ...JSON.parse(JSON.stringify(DEFAULT_APPEARANCE)),
-                        ...parsed,
-                        backgroundVisualizer: {
-                            ...defaultBackgroundVisualizerSettings,
-                            ...(parsed.backgroundVisualizer || {})
-                        }
-                    };
-                } catch (e) {
-                    console.error("Failed to parse appearance settings from storage, using defaults.", e);
-                    currentAppearanceSettings = JSON.parse(JSON.stringify(DEFAULT_APPEARANCE));
-                }
-            } else {
-                currentAppearanceSettings = JSON.parse(JSON.stringify(DEFAULT_APPEARANCE));
-            }
-            applyAppearanceSettings(currentAppearanceSettings, "init");
-            updateAppearanceSettingsUI(currentAppearanceSettings);
-        }
-
-        function updateAppearanceSettingsUI(settings) {
-            darkModeToggle.checked = settings.darkMode;
-            headerGradientStartInput.value = settings.headerGradientStart; 
-            headerGradientEndInput.value = settings.headerGradientEnd; 
-            headerGradientAngleInput.value = settings.headerGradientAngle;
-            enableTranslucencyInput.checked = settings.enableTranslucency; 
-            uiElementBaseColorInput.value = settings.uiElementBaseColor; 
-            uiElementOpacityInput.value = settings.uiElementOpacity; 
-            if(uiElementOpacityValueDisplay) uiElementOpacityValueDisplay.textContent = parseFloat(settings.uiElementOpacity).toFixed(2); 
-            uiElementBackdropBlurInput.value = settings.uiElementBackdropBlur; 
-            if(uiElementBackdropBlurValueDisplay) uiElementBackdropBlurValueDisplay.textContent = `${settings.uiElementBackdropBlur}px`;
-            
-            updateBackgroundVisualizerUIFromSettings();
-        }
-
-        function saveKeybindsToStorage(keybinds) { localStorage.setItem(KEYBINDS_STORAGE_KEY, JSON.stringify(keybinds)); }
-        function loadKeybindsFromStorage() { 
-            const storedKeybinds = localStorage.getItem(KEYBINDS_STORAGE_KEY); 
-            try { 
-                currentKeybinds = storedKeybinds ? { ...DEFAULT_KEYBINDS, ...JSON.parse(storedKeybinds) } : { ...DEFAULT_KEYBINDS };
-            } catch (e) { 
-                console.error("Failed to parse stored keybinds:", e); currentKeybinds = { ...DEFAULT_KEYBINDS }; 
-            } 
-            keybindParamExtractorInput.value = currentKeybinds.paramExtractor; 
-            keybindBatchCalculatorInput.value = currentKeybinds.batchCalculator; 
-            if (keybindCsvToJsonInput) keybindCsvToJsonInput.value = currentKeybinds.csvToJson;
-            keybindTool4Input.value = currentKeybinds.tool4; 
-            keybindTool5Input.value = currentKeybinds.tool5; 
-            keybindOpenSettingsInput.value = currentKeybinds.openSettings; 
-        }
-
         function showModal(modalElement) { if (modalElement) modalElement.classList.add('visible'); }
         function hideModal(modalElement) { if (modalElement) modalElement.classList.remove('visible'); }
 
@@ -753,151 +344,38 @@
         batchCountNearestBtn.addEventListener('click', () => { window.open('Tools/Batchcountcalculator/batchcount_calculator-nearestround.html', '_blank', 'noopener,noreferrer'); hideModal(batchCountModal); });
         cancelBatchCountBtn.addEventListener('click', () => hideModal(batchCountModal));
         
-        settingsButton.addEventListener('click', () => { 
-            loadAppearanceSettingsFromStorage();
-            loadKeybindsFromStorage(); 
-            showModal(settingsModal); 
-        });
-        closeSettingsBtn.addEventListener('click', () => hideModal(settingsModal));
+        [batchCountModal].forEach(modal => { if (modal) { modal.addEventListener('click', (event) => { if (event.target === modal) hideModal(modal); });}});
+        document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { if (batchCountModal && batchCountModal.classList.contains('visible')) hideModal(batchCountModal); }});
         
-        // Event listener for the dark mode toggle for instant changes
-        darkModeToggle.addEventListener('change', () => {
-            currentAppearanceSettings.darkMode = darkModeToggle.checked;
-            applyAppearanceSettings(currentAppearanceSettings, "init"); // Apply change immediately
-            saveAppearanceSettingsToStorage(currentAppearanceSettings); // Save the new state
-            showNotification(`Dark Mode ${currentAppearanceSettings.darkMode ? 'Enabled' : 'Disabled'}`);
-        });
-
-        applyAppearanceBtn.addEventListener('click', () => { 
-            currentAppearanceSettings.darkMode = darkModeToggle.checked;
-            currentAppearanceSettings.headerGradientStart = headerGradientStartInput.value; 
-            currentAppearanceSettings.headerGradientEnd = headerGradientEndInput.value; 
-            currentAppearanceSettings.headerGradientAngle = parseInt(headerGradientAngleInput.value, 10) || DEFAULT_APPEARANCE.headerGradientAngle; 
-            
-            currentAppearanceSettings.enableTranslucency = enableTranslucencyInput.checked; 
-            currentAppearanceSettings.uiElementBaseColor = uiElementBaseColorInput.value; 
-            currentAppearanceSettings.uiElementOpacity = parseFloat(uiElementOpacityInput.value); 
-            currentAppearanceSettings.uiElementBackdropBlur = parseInt(uiElementBackdropBlurInput.value, 10); 
-            
-            collectBackgroundVisualizerSettingsFromUI();
-            applyAppearanceSettings(currentAppearanceSettings, "manual"); 
-            saveAppearanceSettingsToStorage(currentAppearanceSettings); 
-            showNotification("All appearance settings applied!"); 
-        });
-        resetAppearanceBtn.addEventListener('click', () => { 
-            currentAppearanceSettings = JSON.parse(JSON.stringify(DEFAULT_APPEARANCE));
-            applyAppearanceSettings(currentAppearanceSettings, "reset"); 
-            saveAppearanceSettingsToStorage(currentAppearanceSettings); 
-            updateAppearanceSettingsUI(currentAppearanceSettings);
-            showNotification("All appearance settings reset to default."); 
-        });
-
-        // Event listeners for individual visualizer controls
-        Object.values(visControls).forEach(control => {
-            if (control instanceof HTMLElement && (control.tagName === 'INPUT' || control.tagName === 'SELECT') && 
-                control.id !== 'resetParticleSettingsBtn' && control.id !== 'resetBoxSettingsBtn') {
-                const eventType = (['range', 'color'].includes(control.type)) ? 'input' : 'change';
-                control.addEventListener(eventType, () => {
-                    collectBackgroundVisualizerSettingsFromUI();
-                    applyAppearanceSettings(currentAppearanceSettings, "manual");
-                    updateBackgroundVisualizerUIFromSettings(); 
-                });
-            }
-        });
-        visControls.resetParticleSettingsBtn.addEventListener('click', () => {
-            const particleKeys = Object.keys(defaultBackgroundVisualizerSettings).filter(k => k.toLowerCase().includes('particle') || k.toLowerCase().includes('mouse'));
-            particleKeys.forEach(key => {
-                currentAppearanceSettings.backgroundVisualizer[key] = defaultBackgroundVisualizerSettings[key];
-            });
-            applyAppearanceSettings(currentAppearanceSettings, "reset");
-            updateBackgroundVisualizerUIFromSettings();
-            showNotification("Particle visualizer settings reset to default.");
-        });
-        visControls.resetBoxSettingsBtn.addEventListener('click', () => {
-            const boxKeys = Object.keys(defaultBackgroundVisualizerSettings).filter(k => k.toLowerCase().includes('box'));
-                boxKeys.forEach(key => {
-                currentAppearanceSettings.backgroundVisualizer[key] = defaultBackgroundVisualizerSettings[key];
-            });
-            applyAppearanceSettings(currentAppearanceSettings, "reset");
-            updateBackgroundVisualizerUIFromSettings();
-            showNotification("Floating box visualizer settings reset to default.");
-        });
-
-        [uiElementOpacityInput, uiElementBackdropBlurInput].forEach(slider => { 
-            if (slider) { 
-                const displayId = slider.id.replace('-input', '-value'); 
-                const displayElement = document.getElementById(displayId); 
-                if (displayElement) { 
-                    slider.addEventListener('input', () => { 
-                        let value = slider.value; 
-                        if (slider.id === 'ui-element-opacity-input') value = parseFloat(value).toFixed(2); 
-                        else value = `${value}px`; displayElement.textContent = value; 
-                    }); 
-                } 
-            } 
-        });
-        
-        saveKeybindsBtn.addEventListener('click', () => { 
-            currentKeybinds.paramExtractor = keybindParamExtractorInput.value.trim(); 
-            currentKeybinds.batchCalculator = keybindBatchCalculatorInput.value.trim(); 
-            if (keybindCsvToJsonInput) currentKeybinds.csvToJson = keybindCsvToJsonInput.value.trim();
-            currentKeybinds.tool4 = keybindTool4Input.value.trim(); 
-            currentKeybinds.tool5 = keybindTool5Input.value.trim(); 
-            currentKeybinds.openSettings = keybindOpenSettingsInput.value.trim(); 
-            saveKeybindsToStorage(currentKeybinds); 
-            showNotification("Keybinds saved!"); 
-        });
-        resetKeybindsBtn.addEventListener('click', () => { currentKeybinds = { ...DEFAULT_KEYBINDS }; saveKeybindsToStorage(currentKeybinds); loadKeybindsFromStorage(); showNotification("Keybinds reset to default."); });
-        
-        [batchCountModal, settingsModal].forEach(modal => { if (modal) { modal.addEventListener('click', (event) => { if (event.target === modal) hideModal(modal); });}});
-        document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { if (batchCountModal && batchCountModal.classList.contains('visible')) hideModal(batchCountModal); else if (settingsModal && settingsModal.classList.contains('visible')) hideModal(settingsModal); }});
-        document.addEventListener('keydown', (event) => { 
-            const activeElement = document.activeElement; 
-            const isTyping = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA' || activeElement.isContentEditable); 
-            if (isTyping && activeElement.closest('#settings-modal')) {
-                return; // Don't trigger global keybinds when typing in settings
-            }
-            
-            let keyString = ""; 
-            if (event.ctrlKey) keyString += "Control+"; 
-            if (event.altKey) keyString += "Alt+"; 
-            if (event.shiftKey) keyString += "Shift+"; 
-            const keyName = event.key.length === 1 ? event.key.toUpperCase() : event.key; 
-            keyString += keyName; 
-            const clickToolCard = (toolId) => { const card = document.getElementById(`${toolId}-card`); if (card) card.click(); }; 
-            
-            if (currentKeybinds.paramExtractor && keyString === currentKeybinds.paramExtractor.toUpperCase()) { event.preventDefault(); clickToolCard('parameter-extractor'); } 
-            else if (currentKeybinds.batchCalculator && keyString === currentKeybinds.batchCalculator.toUpperCase()) { event.preventDefault(); clickToolCard('batch-count-calculator'); } 
-            else if (currentKeybinds.csvToJson && keyString === currentKeybinds.csvToJson.toUpperCase()) { event.preventDefault(); clickToolCard('csv-to-json-processor'); }
-            else if (currentKeybinds.tool4 && keyString === currentKeybinds.tool4.toUpperCase()) { event.preventDefault(); clickToolCard('tool-4'); } 
-            else if (currentKeybinds.tool5 && keyString === currentKeybinds.tool5.toUpperCase()) { event.preventDefault(); clickToolCard('tool-5'); } 
-            else if (currentKeybinds.openSettings && keyString === currentKeybinds.openSettings.toUpperCase()) { event.preventDefault(); if (settingsModal && settingsModal.classList.contains('visible')) hideModal(settingsModal); else if (settingsButton) settingsButton.click(); } 
-        });
         function showNotification(message, duration = 3000, type = 'info') { const container = document.getElementById('notification-container'); if (!container) { console.warn("Notification container not found."); return; } const notification = document.createElement('div'); notification.className = 'notification'; if (type === 'error') notification.classList.add('error'); notification.textContent = message; container.appendChild(notification); setTimeout(() => { notification.classList.add('fade-out'); notification.addEventListener('animationend', () => notification.remove(), { once: true }); }, duration - NOTIFICATION_FADE_DURATION); }
         
-        window.addEventListener('mousemove', e => { mouseForParticles.x = e.clientX; mouseForParticles.y = e.clientY; });
-        window.addEventListener('mouseout', () => { mouseForParticles.x = undefined; mouseForParticles.y = undefined; });
-        window.addEventListener('resize', () => {
-            applyAppearanceSettings(currentAppearanceSettings, "resize");
-        });
-        
-        document.addEventListener('DOMContentLoaded', () => { 
-            loadAppearanceSettingsFromStorage();
-            loadKeybindsFromStorage(); 
-            populateMenus(); 
+        // --- Dark Mode Logic ---
+        function applyDarkMode(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            const isDarkMode = document.body.classList.toggle('dark-mode');
+            localStorage.setItem(DARK_MODE_STORAGE_KEY, isDarkMode);
         });
 
-        // Initialize min/max for visualizer sliders
-        visControls.particleCountSlider.min=10; visControls.particleCountSlider.max=500;
-        visControls.particleSpeedSlider.min=0.1; visControls.particleSpeedSlider.max=3; visControls.particleSpeedSlider.step=0.1;
-        visControls.particleSizeSlider.min=1; visControls.particleSizeSlider.max=10; visControls.particleSizeSlider.step=0.5;
-        visControls.lineDistanceSlider.min=20; visControls.lineDistanceSlider.max=300;
-        visControls.mouseRadiusSlider.min=20; visControls.mouseRadiusSlider.max=200;
-        visControls.boxCountSlider.min=5; visControls.boxCountSlider.max=50;
-        visControls.maxBoxSizeSlider.min=20; visControls.maxBoxSizeSlider.max=200;
-        visControls.boxOpacitySlider.min=0.05; visControls.boxOpacitySlider.max=1; visControls.boxOpacitySlider.step=0.05;
-        visControls.boxAnimationScaleSlider.min=0.5; visControls.boxAnimationScaleSlider.max=3; visControls.boxAnimationScaleSlider.step=0.1;
-        visControls.boxBorderWidthSlider.min=1; visControls.boxBorderWidthSlider.max=10;
+        // --- Initial Load ---
+        window.addEventListener('mousemove', e => { mouseForParticles.x = e.clientX; mouseForParticles.y = e.clientY; });
+        window.addEventListener('mouseout', () => { mouseForParticles.x = undefined; mouseForParticles.y = undefined; });
+        window.addEventListener('resize', startOrRestartVisualizer);
+        
+        document.addEventListener('DOMContentLoaded', () => { 
+            // Load Dark Mode Preference
+            const savedDarkMode = localStorage.getItem(DARK_MODE_STORAGE_KEY) === 'true';
+            applyDarkMode(savedDarkMode);
+
+            populateMenus(); 
+            startOrRestartVisualizer();
+        });
 
     </script>
 </body>
