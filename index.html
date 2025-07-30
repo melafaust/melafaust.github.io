@@ -471,11 +471,11 @@
         const programs = [ 
             { id: 'parameter-extractor', name: 'Parameter Extractor', icon: '🛠️', description: "Extracts URL parameters from various Azure Function JSON payloads.", file: 'Tools/parameter_tool.html', keybindAction: 'paramExtractor' }, 
             { id: 'batch-count-calculator', name: 'Batch Count Calculator', icon: '🧮', description: "Calculate batch sizes. Opens options modal.", modal: batchCountModal, keybindAction: 'batchCalculator' }, 
-            { id: 'csv-to-json-processor', name: 'CSV to JSON Processor', icon: '📄', description: "Filters CSV data and converts it to structured JSON.", file: 'Tools/data_validation_tool_themed.html', keybindAction: 'csvToJson'},
+            { id: 'csv-to-json-processor', name: 'CSV to JSON Processor', icon: '📄', description: "Filters CSV data and converts it to structured JSON.", file: 'csv-to-json-tool/', keybindAction: 'csvToJson'},
             { id: 'tool-4', name: 'Tool 4 (Future)', icon: '⚙️', description: "This tool isn't implemented yet.", file: '#', keybindAction: 'tool4'}, 
             { id: 'tool-5', name: 'Tool 5 (Future)', icon: '⚙️', description: "This tool isn't implemented yet.", file: '#', keybindAction: 'tool5'} 
         ];
-       
+        
         function createProgramCard(item) { const isLink = item.file && item.file !== '#'; const card = document.createElement(isLink ? 'a' : 'div'); card.className = 'program-item'; card.id = `${item.id}-card`; let fullDesc = item.description; if (isLink) { card.href = item.file; card.target = '_blank'; card.rel = 'noopener noreferrer'; fullDesc = `Launches the ${item.name}. ${item.description}`; } else if (item.modal) { card.addEventListener('click', () => showModal(item.modal)); fullDesc = `Opens the ${item.name}. ${item.description}`; } else if (item.file === '#') { card.style.cursor = 'not-allowed'; card.addEventListener('click', (e) => { e.preventDefault(); showNotification(`"${item.name}" is not yet implemented.`, 3000, 'info'); }); } card.innerHTML = `<span class="item-icon">${item.icon || '⭐'}</span><span class="item-title">${item.name}</span>`; card.addEventListener('mouseover', () => { programExplanation.textContent = fullDesc; programExplanation.classList.add('active'); }); card.addEventListener('mouseout', () => { programExplanation.innerHTML = '<p>Hover over a program card above to see its explanation here.</p>'; programExplanation.classList.remove('active'); }); return card; }
         function populateMenus() { programMenu.innerHTML = ''; programs.forEach(prog => programMenu.appendChild(createProgramCard(prog)));}
 
