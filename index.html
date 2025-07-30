@@ -229,10 +229,10 @@
         let animationFrameIdVisualizer;
 
         const programs = [ 
-            { id: 'parameter-extractor', name: 'Parameter Extractor', icon: '🛠️', description: "Extracts URL parameters from various Azure Function JSON payloads.", file: 'collect-params/' }, 
-            { id: 'batch-count-calculator', name: 'Batch Count Calculator', icon: '🧮', description: "Calculate batch sizes. Opens options modal.", modal: batchCountModal }, 
+            { id: 'parameter-extractor', name: 'Parameter Collector', icon: '🛠️', description: "A Script that automatically extracts parameters from failed pipelines of various Azure Function.", file: 'collect-params/' }, 
+            { id: 'batch-count-calculator', name: 'Batch Count Calculator', icon: '🧮', description: "Following from the flowchart of historical reingestion. This tool calculates/converts digits.", modal: batchCountModal }, 
             { id: 'csv-to-json-processor', name: 'CSV to JSON (Release Environments) ', icon: '📄', description: "Filters CSV data and converts it to structured JSON.", file: 'csv-to-json-tool/'},
-            { id: 'tool-4', name: 'Tool 4 (Future)', icon: '⚙️', description: "This tool isn't implemented yet.", file: '#'}, 
+            { id: 'tool-4', name: 'Automated Alerts Monitoring', icon: '⚙️', description: "A Powershell Script that automatically send the data to Ms Teams via Webhooks", file: 'alerts-moni/'}, 
             { id: 'tool-5', name: 'Tool 5 (Future)', icon: '⚙️', description: "This tool isn't implemented yet.", file: '#'} 
         ];
         
