@@ -4,42 +4,200 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSV to JSON [Release Environments]</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            /* Light Theme */
+            --page-bg-gradient-start: #f4f0f9;
+            --page-bg-gradient-end: #e8f1ff;
+            --container-bg-color: rgba(255, 255, 255, 0.6);
+            --container-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            --container-border-color: rgba(255, 255, 255, 0.18);
+            --title-gradient-start: #6A0DAD;
+            --title-gradient-end: #D4529D;
+            --text-color: #222;
+            --text-color-light: #555;
+            --input-bg: rgba(255, 255, 255, 0.5);
+            --input-border-color: #d1d5db;
+            --input-text-color: #374151;
+            --accent-color: #8A3DAF;
+            --accent-color-light: rgba(138, 61, 175, 0.1);
+            --button-primary-bg: linear-gradient(90deg, #8A3DAF 0%, #D4529D 100%);
+            --button-primary-hover-bg: linear-gradient(90deg, #9a4ec2 0%, #e06aa8 100%);
+            --button-secondary-bg: #4b5563;
+            --button-secondary-hover-bg: #6b7280;
+            --button-danger-bg: #ef4444;
+            --button-danger-hover-bg: #f87171;
+            --button-text-color: #FFFFFF;
+            --success-bg: #dcfce7;
+            --success-text: #166534;
+            --error-bg: #fee2e2;
+            --error-text: #991b1b;
+            --info-bg: #e0f2fe;
+            --info-text: #075985;
+        }
+
+        body.dark-mode {
+            /* Dark Theme */
+            --page-bg-gradient-start: #1a1c23;
+            --page-bg-gradient-end: #2c2f33;
+            --container-bg-color: rgba(44, 47, 51, 0.65);
+            --container-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --container-border-color: rgba(255, 255, 255, 0.1);
+            --title-gradient-start: #9333ea;
+            --title-gradient-end: #ec4899;
+            --text-color: #f3f4f6;
+            --text-color-light: #9ca3af;
+            --input-bg: rgba(20, 20, 20, 0.3);
+            --input-border-color: #4b5563;
+            --input-text-color: #f3f4f6;
+            --accent-color: #a78bfa;
+            --accent-color-light: rgba(167, 139, 250, 0.15);
+            --button-primary-bg: linear-gradient(90deg, #7c3aed 0%, #db2777 100%);
+            --button-primary-hover-bg: linear-gradient(90deg, #8b5cf6 0%, #e14d8c 100%);
+            --button-secondary-bg: #374151;
+            --button-secondary-hover-bg: #4b5563;
+            --button-danger-bg: #b91c1c;
+            --button-danger-hover-bg: #dc2626;
+            --success-bg: #14532d;
+            --success-text: #bbf7d0;
+            --error-bg: #7f1d1d;
+            --error-text: #fecaca;
+            --info-bg: #1e40af;
+            --info-text: #bfdbfe;
+        }
+
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         body {
             font-family: 'Inter', sans-serif;
+            background: linear-gradient(-45deg, var(--page-bg-gradient-start), var(--page-bg-gradient-end), #e8f1ff, #f4f0f9);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
         }
+
+        .container {
+            width: 100%;
+            max-width: 56rem;
+            margin: auto;
+            background: var(--container-bg-color);
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: var(--container-shadow);
+            position: relative;
+            border: 1px solid var(--container-border-color);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: background-color 0.3s ease;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        header { text-align: center; margin-bottom: 2.5rem; }
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--title-gradient-start), var(--title-gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        header p { color: var(--text-color-light); margin-top: 0.5rem; font-size: 1.1rem; }
+        .back-link { position: absolute; top: 1.5rem; left: 1.5rem; font-size: 1.5rem; text-decoration: none; transition: transform 0.2s ease; }
+        .back-link:hover { transform: scale(1.1); }
+
+        .input-label { font-weight: 600; margin-bottom: 0.5rem; display: block; }
+        .form-section { margin-bottom: 2rem; padding: 1.5rem; border: 1px solid var(--input-border-color); border-radius: 16px; background: rgba(255,255,255,0.05); }
+        select, textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--input-border-color);
+            border-radius: 12px;
+            background-color: var(--input-bg);
+            color: var(--input-text-color);
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        select:focus, textarea:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px var(--accent-color-light); }
+        textarea { min-height: 16rem; font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace; }
+
         #dropZone {
-            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            border: 2px dashed var(--input-border-color);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
-        #dropZone.dragover {
-            background-color: #e0f2fe; /* light sky blue */
-            border-color: #0ea5e9; /* sky blue */
+        #dropZone:hover { border-color: var(--accent-color); background-color: var(--accent-color-light); }
+        #dropZone.dragover { background-color: var(--accent-color-light); border-color: var(--accent-color); border-style: solid; }
+        #fileInput { display: none; }
+        .browse-link { color: var(--accent-color); text-decoration: underline; cursor: pointer; font-weight: 600; }
+
+        .button-group { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+        .btn {
+            color: var(--button-text-color);
+            font-weight: 700;
+            padding: 0.8rem 1.75rem;
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background-size: 200% auto;
         }
-        textarea::-webkit-scrollbar { width: 8px; }
-        textarea::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        textarea::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
-        textarea::-webkit-scrollbar-thumb:hover { background: #555; }
-        .input-label { font-weight: 500; margin-bottom: 0.25rem; display: block; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 7px 20px rgba(0,0,0,0.15); }
+        .btn:active { transform: translateY(-1px); }
+        .btn-save { background-image: var(--button-primary-bg); }
+        .btn-save:hover { background-position: right center; }
+        .btn-copy { background: var(--button-secondary-bg); }
+        .btn-copy:hover { background: var(--button-secondary-hover-bg); }
+        .btn-reset { background: var(--button-danger-bg); }
+        .btn-reset:hover { background: var(--button-danger-hover-bg); }
+        
+        #messageArea { margin-top: 1.5rem; text-align: center; font-size: 0.9rem; font-weight: 500; padding: 0.8rem; border-radius: 12px; opacity: 0; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease; }
+        #messageArea.visible { opacity: 1; transform: translateY(0); }
+        #messageArea.success { background-color: var(--success-bg); color: var(--success-text); }
+        #messageArea.error { background-color: var(--error-bg); color: var(--error-text); }
+        #messageArea.info { background-color: var(--info-bg); color: var(--info-text); }
+
+        textarea::-webkit-scrollbar { width: 10px; }
+        textarea::-webkit-scrollbar-track { background: transparent; }
+        textarea::-webkit-scrollbar-thumb { background-color: var(--input-border-color); border-radius: 10px; border: 2px solid var(--input-bg); }
+        textarea::-webkit-scrollbar-thumb:hover { background-color: var(--accent-color); }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 p-4 md:p-8">
+<body>
 
-    <div class="container mx-auto max-w-4xl bg-white p-6 md:p-8 rounded-xl shadow-2xl relative">
-        <header class="mb-8 text-center">
-            <a href="../" title="Back to Home" class="absolute top-4 left-4 text-2xl">🏠</a>
-            <h1 class="text-3xl md:text-4xl font-bold text-sky-600">CSV to Structured JSON Tool</h1>
-            <p class="text-slate-600 mt-2">Select a tenant, then drop a CSV. The tool will automatically generate clean, deduplicated JSON.</p>
+    <div class="container">
+        <header>
+            <a href="../" title="Back to Home" class="back-link">🏠</a>
+            <h1>CSV to JSON Converter</h1>
+ <h3>(Release Environments)</h3>
+            <p>Instantly transform your CSV files into clean, structured JSON for Reingestion.</p>
         </header>
 
-        <section class="mb-6 p-4 border border-slate-300 rounded-lg bg-slate-50">
-            <h2 class="text-xl font-semibold mb-3 text-sky-700">Configuration</h2>
+        <section class="form-section">
+            <h2 class="input-label" style="font-size: 1.25rem; color: var(--section-title-color);">Configuration</h2>
             <div>
-                <label for="tenantSelect" class="input-label text-slate-700">Tenant:</label>
-                <select id="tenantSelect" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
+                <label for="tenantSelect" class="input-label">Tenant:</label>
+                <select id="tenantSelect">
                     <option value="">-- Select Tenant --</option>
                     <option value="accenturecio04">accenturecio04</option>
                     <option value="accenturecio05">accenturecio05</option>
@@ -59,38 +217,26 @@
         </section>
 
         <section class="mb-6">
-            <div id="dropZone" class="border-2 border-dashed border-slate-400 rounded-lg p-8 md:p-12 text-center cursor-pointer hover:border-sky-500">
-                <p class="text-slate-600 text-lg">Drag & Drop your CSV File Here</p>
-                <p class="text-sm text-slate-500 mt-1">or</p>
-                <input type="file" id="fileInput" accept=".csv" class="block w-full max-w-xs mx-auto mt-2 text-sm text-slate-500
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-full file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-sky-50 file:text-sky-700
-                    hover:file:bg-sky-100">
-                <div id="fileInfo" class="mt-3 text-sm text-slate-500"></div>
+            <div id="dropZone">
+                <p style="font-size: 1.2rem; font-weight: 600;">Drag & Drop CSV File Here</p>
+                <p style="color: var(--text-color-light); margin-top: 0.25rem;">or <span class="browse-link" onclick="document.getElementById('fileInput').click()">browse files</span></p>
+                <input type="file" id="fileInput" accept=".csv">
+                <div id="fileInfo" class="mt-3 text-sm" style="color: var(--text-color-light);"></div>
             </div>
         </section>
 
         <section class="mb-6">
-            <label for="outputBox" class="input-label text-slate-700">Output Area:</label>
-            <textarea id="outputBox" placeholder="1. Select a Tenant.&#10;2. Drop a CSV file.&#10;3. Formatted, unique JSON will appear here automatically."
-                        class="w-full h-64 md:h-96 p-3 border border-slate-300 rounded-md bg-slate-50 font-mono text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500"></textarea>
+            <label for="outputBox" class="input-label">JSON Output:</label>
+            <textarea id="outputBox" placeholder="1. Select a Tenant.&#10;2. Drop a CSV file.&#10;3. Formatted, unique JSON will appear here automatically."></textarea>
         </section>
 
-        <section class="flex flex-wrap gap-3 justify-center">
-            <button id="saveButton" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-150 ease-in-out">
-                Save as .txt
-            </button>
-            <button id="copyButton" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-150 ease-in-out">
-                Copy Output
-            </button>
-            <button id="resetButton" class="bg-rose-500 hover:bg-rose-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-150 ease-in-out">
-                Reset All
-            </button>
+        <section class="button-group">
+            <button id="saveButton" class="btn btn-save">Save as .txt</button>
+            <button id="copyButton" class="btn btn-copy">Copy Output</button>
+            <button id="resetButton" class="btn btn-reset">Reset All</button>
         </section>
 
-        <div id="messageArea" class="mt-6 text-center text-sm"></div>
+        <div id="messageArea"></div>
     </div>
 
 <script>
@@ -103,6 +249,14 @@
     const copyButton = document.getElementById('copyButton');
     const resetButton = document.getElementById('resetButton');
     const messageArea = document.getElementById('messageArea');
+    
+    const DARK_MODE_STORAGE_KEY = 'adoInsightsToolDarkMode_v1';
+    document.addEventListener('DOMContentLoaded', () => {
+        const isDarkMode = localStorage.getItem(DARK_MODE_STORAGE_KEY) === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+        }
+    });
 
     function parseCsvRow(rowString) {
         const values = [];
@@ -133,22 +287,27 @@
             showMessage('Please drop or select a valid CSV file.', 'error');
             return;
         }
-
+        
         const selectedTenant = tenantSelect.value;
         if (!selectedTenant) {
-            showMessage('Please select a Tenant from the dropdown before processing a file.', 'error');
+            showMessage('Please select a Tenant first.', 'error');
             fileInput.value = null; 
             return;
         }
 
         fileInfoDiv.textContent = `Processing: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
         outputBox.value = ''; 
-        showMessage('Reading and processing CSV file...', 'info');
+        showMessage('Reading and processing file...', 'info');
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            const csvString = e.target.result;
-            processCsvData(csvString);
+            try {
+                const csvString = e.target.result;
+                processCsvData(csvString);
+            } catch (error) {
+                showMessage('An unexpected error occurred during processing.', 'error');
+                console.error("Processing Error:", error);
+            }
         };
         reader.onerror = () => {
             showMessage('Error reading file.', 'error');
@@ -169,52 +328,48 @@
     function toNumeric(value) {
         if (value === null || value === '') return value;
         const num = Number(value);
-        return isNaN(num) ? value : num;
+        return isNaN(num) || value.trim() === '' ? value : num;
     }
 
     function processCsvData(csvString) {
         const lines = csvString.split(/\r\n|\r|\n/).filter(line => line.trim() !== '');
         if (lines.length < 2) {
-            showMessage('CSV file needs at least a header and one data row.', 'error');
+            showMessage('CSV needs a header and at least one data row.', 'error');
             return;
         }
 
         const headerLine = lines.shift();
         const headers = parseCsvRow(headerLine);
-
         const statusColumnIndex = 10;
         const processValue = 'missing';
         const selectedTenant = tenantSelect.value;
 
         if (headers.length < 11) { 
-            showMessage('CSV needs at least 11 columns (up to Column K) for the tool to work.', 'error');
+            showMessage('CSV requires at least 11 columns to work correctly.', 'error');
             return;
         }
 
-        const processedObjects = [];
-        lines.forEach(line => {
+        const processedObjects = lines.map(line => {
             const values = parseCsvRow(line);
-            if (values.length > statusColumnIndex && values[statusColumnIndex] && values[statusColumnIndex].trim().toLowerCase() === processValue) {
+            if (values.length > statusColumnIndex && values[statusColumnIndex]?.trim().toLowerCase() === processValue) {
                 if (values.length >= 3) { 
-                    const param1Val = values[0] ? values[0].trim() : "";
-                    const param2Val = values[2] ? values[2].trim() : ""; 
+                    const param1Val = values[0]?.trim() || "";
+                    const param2Val = values[2]?.trim() || ""; 
                     let param3Val = "";
-
                     const underscoreIndex = param1Val.lastIndexOf('_');
                     if (underscoreIndex !== -1 && underscoreIndex < param1Val.length - 1) {
                         param3Val = param1Val.substring(underscoreIndex + 1);
                     }
-
-                    const obj = {
-                        "tenant": selectedTenant,
-                        "param1": param1Val,
-                        "param2": toNumeric(param2Val),
-                        "param3": toNumeric(param3Val)
+                    return {
+                        tenant: selectedTenant,
+                        param1: param1Val,
+                        param2: toNumeric(param2Val),
+                        param3: toNumeric(param3Val)
                     };
-                    processedObjects.push(obj);
                 }
             }
-        });
+            return null;
+        }).filter(Boolean);
 
         const uniqueObjects = [];
         const seenSignatures = new Set();
@@ -230,22 +385,14 @@
         outputBox.value = finalOutputString;
         outputBox.scrollTop = 0; 
 
-        showMessage(`Processing complete. Found ${uniqueObjects.length} unique JSON objects.`, 'success');
+        showMessage(`Success! Found ${uniqueObjects.length} unique JSON objects.`, 'success');
     }
 
     saveButton.addEventListener('click', () => {
         const textToSave = outputBox.value;
         const selectedTenant = tenantSelect.value;
-
-        if (textToSave.trim() === "") {
-            showMessage("Output box is empty. Nothing to save.", 'info');
-            return;
-        }
-
-        if (!selectedTenant) {
-            showMessage("Please select a Tenant first to name the file.", 'error');
-            return;
-        }
+        if (!textToSave) { showMessage("Nothing to save.", 'info'); return; }
+        if (!selectedTenant) { showMessage("Please select a Tenant to name the file.", 'error'); return; }
 
         const blob = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
         const a = document.createElement('a');
@@ -255,18 +402,16 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(a.href);
-        showMessage('File download initiated.', 'success');
+        showMessage('Download initiated.', 'success');
     });
 
     copyButton.addEventListener('click', () => {
-        if (outputBox.value.trim() === "") {
-            showMessage("Output box is empty. Nothing to copy.", 'info'); return;
-        }
+        if (!outputBox.value) { showMessage("Nothing to copy.", 'info'); return; }
         navigator.clipboard.writeText(outputBox.value)
-            .then(() => showMessage('Output copied to clipboard!', 'success'))
+            .then(() => showMessage('Copied to clipboard!', 'success'))
             .catch(err => {
-                showMessage('Failed to copy output. See console for details.', 'error'); 
-                console.error('Error copying to clipboard: ', err);
+                showMessage('Failed to copy. See console for details.', 'error'); 
+                console.error('Clipboard Error: ', err);
             });
     });
 
@@ -278,18 +423,16 @@
         showMessage('Tool has been reset.', 'info');
     });
 
+    let messageTimer;
     function showMessage(message, type = 'info') {
+        clearTimeout(messageTimer);
         messageArea.textContent = message;
-        messageArea.className = 'mt-6 text-center text-sm p-2 rounded-md transition-opacity duration-300'; 
-        if (type === 'success') messageArea.classList.add('bg-emerald-100', 'text-emerald-700');
-        else if (type === 'error') messageArea.classList.add('bg-rose-100', 'text-rose-700');
-        else messageArea.classList.add('bg-sky-100', 'text-sky-700');
-
-        setTimeout(() => {
-            if (messageArea.textContent === message) {
-                messageArea.classList.add('opacity-0');
-            }
-        }, 7000);
+        messageArea.className = 'visible'; 
+        messageArea.classList.add(type);
+        
+        messageTimer = setTimeout(() => {
+            messageArea.classList.remove('visible');
+        }, 5000);
     }
 </script>
 
