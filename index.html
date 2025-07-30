@@ -8,12 +8,12 @@
     <style>
         /* CSS Root Variables: Defines the color palette and sizing for the application. */
         :root {
-            /* Default Theme Colors */
+            /* Default (Light) Theme Colors */
             --header-gradient-start: #4A0082;
             --header-gradient-end: #D4529D;
             --header-gradient-angle: 105deg; 
             --header-main-title-color: #FFFFFF;
-            --page-bg-color: #F8F9FA; /* Will be less visible with dynamic background */
+            --page-bg-color: #F8F9FA;
             --section-title-color: var(--header-gradient-start);
             --card-bg-color: #FFFFFF; 
             --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -29,48 +29,45 @@
             --input-border-color: #ced4da;
             --input-text-color: #495057;
             --danger-color: #dc3545;
-
-            /* Calendar Specific Colors */
-            --calendar-header-bg: #F3E8FA;
-            --calendar-day-border: #D8BFD8;
-            --calendar-day-hover-bg: #E8D9F2;
-            --calendar-selected-day-bg: var(--header-gradient-end);
-            --calendar-selected-day-text: #FFFFFF;
-            --calendar-today-border-color: var(--header-gradient-start);
-            --note-indicator-color: var(--header-gradient-end);
-            --calendar-nav-button-color: var(--header-gradient-end);
-            --calendar-nav-button-hover-color: var(--header-gradient-start);
-            --calendar-month-year-color: var(--header-gradient-start);
-            --calendar-weekdays-color: var(--header-gradient-start);
-
-            /* Notepad Specific Colors */
-            --notepad-heading-color: var(--header-gradient-start);
-            --notes-item-rename-icon-color: var(--header-gradient-end);
-
-            /* General UI Elements */
-            --icon-button-size: 20px;
             --settings-icon-fill: #FFFFFF;
 
-            /* Appearance Settings Variables (Page Background Image/Blur removed) */
-            /* --page-background-image-url: url('https://placehold.co/1920x1080/7F00FF/FFFFFF?text=Background+Placeholder&font=roboto'); */
-            /* --page-background-blur: 2px;  */
-            
+            /* UI Elements */
+            --icon-button-size: 20px;
             --enable-translucency: 0; 
             --ui-element-base-color-rgb: 255, 255, 255; 
             --ui-element-opacity: 0.85; 
             --ui-element-backdrop-blur: 5px; 
             --ui-element-border-color: rgba(200, 200, 200, 0.3);
 
-            /* Background Visualizer Specific - Initial minimal styling */
-            --visualizer-settings-panel-bg: rgba(255, 255, 255, 0.8);
-            --visualizer-settings-blur: 10px;
-            --visualizer-settings-heading-color: #6A0DAD;
-            --visualizer-settings-border-color: rgba(106, 13, 173, 0.25);
-            --visualizer-input-border-color: rgba(106, 13, 173, 0.3);
+            /* Background Visualizer Specific */
             --visualizer-accent-color: #6A0DAD;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; } /* From backgroundsystem */
+        /* Dark Mode Theme */
+        body.dark-mode {
+            --header-gradient-start: #23272A;
+            --header-gradient-end: #5865F2;
+            --page-bg-color: #2C2F33;
+            --section-title-color: #FFFFFF;
+            --card-bg-color: #23272A;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --card-title-color: #FFFFFF;
+            --card-icon-color: #7289DA;
+            --text-color-dark: #E1E1E1; /* Lighter text for dark bg */
+            --link-color: #7289DA;
+            --button-primary-bg: #5865F2;
+            --button-primary-hover-bg: #4752C4;
+            --input-bg: #40444B;
+            --input-border-color: #2C2F33;
+            --input-text-color: #FFFFFF;
+            --danger-color: #ED4245;
+            --settings-icon-fill: #FFFFFF;
+            --ui-element-base-color-rgb: 44, 47, 51; /* Darker base for translucency */
+            --ui-element-border-color: rgba(255, 255, 255, 0.1);
+            --visualizer-accent-color: #7289DA;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -78,10 +75,8 @@
             color: var(--text-color-dark);
             margin: 0; padding: 0; line-height: 1.65; overflow-x: hidden;
             box-sizing: border-box; position: relative; 
-            /* overflow: hidden; from backgroundsystem - REMOVED as it breaks scrolling for devops.html */
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-
-        /* REMOVED body::before for static background image */
 
         *, *:before, *:after { box-sizing: inherit; }
 
@@ -92,12 +87,11 @@
         .circles li { position: absolute; display: block; list-style: none; bottom: -200px; animation-name: animateBoxVisualizer; animation-timing-function: linear; animation-iteration-count: infinite; }
         @keyframes animateBoxVisualizer { 0% { transform: translateY(0) rotate(0deg); border-radius: 0; } 100% { transform: translateY(-1200px) rotate(720deg); opacity: 0 !important; border-radius: 50%; } }
 
-
         .top-header-wrapper {
             background: linear-gradient(var(--header-gradient-angle), var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
             color: var(--header-main-title-color); padding: 15px 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); position: relative; /* Ensure it's above background */
-            z-index: 2; /* Make sure header is above visualizer */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); position: relative;
+            z-index: 2;
             transition: background 0.3s ease; 
         }
         .top-header-content { width: 95%; max-width: 1100px; margin: 0 auto; text-align: center; display: flex; justify-content: center; align-items: center; position: relative; }
@@ -108,7 +102,7 @@
         #settings-button:hover { transform: translateY(-50%) rotate(45deg); background-color: rgba(255, 255, 255, 0.15); }
         #settings-button:active { transform: translateY(-50%) rotate(45deg) scale(0.9); }
         
-        .container { width: 95%; max-width: 1100px; margin: 30px auto; padding: 0 15px; position: relative; z-index: 1; /* Ensure content is above visualizer */ }
+        .container { width: 95%; max-width: 1100px; margin: 30px auto; padding: 0 15px; position: relative; z-index: 1; }
         .tools-title { font-size: 2rem; font-weight: 700; color: var(--section-title-color); margin-bottom: 30px; text-align: left; }
         .content-section { margin-bottom: 40px; }
         #programs-section > h2 { display: none; }
@@ -118,88 +112,36 @@
         .program-item:hover { transform: translateY(-5px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); }
         .program-item .item-icon { font-size: 2.4rem; color: var(--card-icon-color); margin-bottom: 15px; }
         .program-item .item-title { font-size: 1rem; font-weight: 700; color: var(--card-title-color); margin: 0; line-height: 1.35; }
-      
+        
         #program-explanation { padding: 20px; background-color: var(--card-bg-color); border: 1px solid #E9ECEF; border-radius: var(--card-border-radius); min-height: 70px; white-space: pre-wrap; font-style: italic; color: #555; box-shadow: var(--card-shadow); font-size: 0.95rem; margin-top: 20px; margin-bottom: 40px; transition: background-color 0.3s ease, border-color 0.3s ease; }
         #program-explanation.active { font-style: normal; color: var(--text-color-dark); }
 
-        #calendar-notes-section { background-color: var(--card-bg-color); padding: 25px; border-radius: var(--card-border-radius); box-shadow: var(--card-shadow); transition: background-color 0.3s ease, border-color 0.3s ease; }
-        #calendar-notes-section > h2 { margin-top: 0; color: var(--section-title-color); border-bottom: 2px solid var(--calendar-header-bg); padding-bottom: 12px; margin-bottom: 20px; font-size: 1.6rem; font-weight: 700; text-align: left; }
-
-        #calendar-notes-container { display: flex; flex-wrap: wrap; gap: 25px; }
-        #calendar-container { flex: 2 1 500px; display: flex; flex-direction: column; background-color: #fdfdff; border: 1px solid var(--calendar-day-border); border-radius: 6px; padding: 20px; transition: background-color 0.3s ease, border-color 0.3s ease; }
-        #calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--calendar-header-bg); }
-        #calendar-header button { background: none; border: none; color: var(--calendar-nav-button-color); font-size: 1.6rem; font-weight: 700; cursor: pointer; padding: 5px; transition: color 0.3s ease; }
-        #calendar-header button:hover { color: var(--calendar-nav-button-hover-color); }
-        #current-month-year { font-size: 1.45rem; font-weight: 700; color: var(--calendar-month-year-color); }
-        #calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 600; color: var(--calendar-weekdays-color); margin-bottom: 10px; font-size: 0.9rem; }
-        #calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-        .calendar-day { position: relative; aspect-ratio: 1 / 1; display: flex; justify-content: center; align-items: center; border: 1px solid var(--calendar-day-border); border-radius: 4px; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.1s ease; font-size: 0.95rem; font-weight: 500; }
-        .calendar-day.inactive { color: #bbb; cursor: default; background-color: #f9f9f9 !important; } 
-        .calendar-day:not(.inactive):hover { background-color: var(--calendar-day-hover-bg); border-color: var(--calendar-selected-day-bg); transform: scale(1.05); }
-        .calendar-day.selected { background-color: var(--calendar-selected-day-bg); border-color: var(--calendar-selected-day-bg); color: var(--calendar-selected-day-text); font-weight: 700; transform: scale(1.05); }
-        .calendar-day.today { border-color: var(--calendar-today-border-color); box-shadow: 0 0 0 2px var(--calendar-today-border-color); font-weight: 700; }
-        .calendar-day .note-indicator { position: absolute; bottom: 4px; right: 4px; width: 8px; height: 8px; background-color: var(--note-indicator-color); border-radius: 50%; border: 1px solid white; box-shadow: 0 0 3px rgba(0,0,0,0.3); }
-
-        #notes-container { flex: 1 1 300px; background-color: #fdfdff; border: 1px solid var(--calendar-day-border); border-radius: 6px; padding: 20px; display: flex; flex-direction: column; transition: background-color 0.3s ease, border-color 0.3s ease; }
-        #notes-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        #notes-heading { margin: 0; color: var(--notepad-heading-color); font-size: 1.4rem; font-weight: 700; }
-        #notes-buttons { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        #create-note-btn, #save-all-notes-btn, #delete-all-notes-btn { border: none; padding: 9px 14px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: background-color 0.3s ease, transform 0.1s ease; outline: none; color: var(--button-primary-text-color); }
-        #create-note-btn, #save-all-notes-btn { background-color: var(--button-primary-bg); }
-        #delete-all-notes-btn { background-color: var(--danger-color); }
-        #create-note-btn:hover, #save-all-notes-btn:hover { background-color: var(--button-primary-hover-bg); }
-        #delete-all-notes-btn:hover { background-color: #c82333; }
-        #create-note-btn:active, #save-all-notes-btn:active, #delete-all-notes-btn:active { transform: scale(0.98); } 
-
-        #notes-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; overflow-y: auto; } 
-        .note-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 10px; border-bottom: 1px solid var(--calendar-day-border); cursor: pointer; transition: background-color 0.2s ease; position: relative; font-size: 1rem; }
-        .note-item .note-name { flex-grow: 1; margin-right: 10px; color: var(--text-color-dark); font-weight: 600; }
-        .note-item:last-child { border-bottom: none; } 
-        .note-item:hover { background-color: var(--calendar-day-hover-bg); }
-        .note-item .note-actions { display: flex; gap: 8px; } 
-        .note-item .note-action-button { background: none; border: none; padding: 0; cursor: pointer; width: var(--icon-button-size); height: var(--icon-button-size); transition: transform 0.1s ease; position: relative; display: flex; align-items: center; justify-content: center; }
-        .note-item .note-action-button svg { display: block; width: 75%; height: 75%; object-fit: contain; }
-        .note-item .rename-button svg { fill: var(--notes-item-rename-icon-color); }
-        .note-item .delete-button svg { fill: var(--danger-color); }
-        .note-item .note-action-button:hover { transform: scale(1.15); } 
-        .note-item .tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(-5px); background-color: var(--text-color-dark); color: #FFFFFF; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s ease; z-index: 10; }
-        .note-item .note-action-button:hover .tooltip { opacity: 1; } 
+        /* Dark Mode Specific Overrides */
+        .dark-mode .program-item { border-color: #40444B; }
+        .dark-mode #program-explanation { background-color: #23272A; border-color: #40444B; color: #B9BBBE; }
+        .dark-mode #program-explanation.active { color: #FFFFFF; }
 
         .translucent-ui .program-item,
         .translucent-ui #program-explanation,
-        .translucent-ui #calendar-notes-section,
-        .translucent-ui #calendar-container,
-        .translucent-ui #notes-container,
         .translucent-ui .modal-content {
             background-color: rgba(var(--ui-element-base-color-rgb), var(--ui-element-opacity));
             backdrop-filter: blur(var(--ui-element-backdrop-blur));
             -webkit-backdrop-filter: blur(var(--ui-element-backdrop-blur)); 
             border: 1px solid var(--ui-element-border-color);
         }
-        .translucent-ui .program-item .item-title,
-        .translucent-ui #program-explanation,
-        .translucent-ui #program-explanation.active,
-        .translucent-ui #calendar-notes-section > h2,
-        .translucent-ui #notes-heading,
-        .translucent-ui .modal-content h3,
-        .translucent-ui .modal-content,
-        .translucent-ui .modal-content .input-group label {
-            /* Example: color: #000000; */ 
-        }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
         .modal-overlay.visible { opacity: 1; visibility: visible; } 
         .modal-content { background-color: var(--card-bg-color); padding: 30px; border-radius: var(--card-border-radius); box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); max-width: 600px; width: 90%; transform: translateY(-20px); transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; color: var(--text-color-dark); max-height: 85vh; overflow-y: auto; }
         .modal-overlay.visible .modal-content { transform: translateY(0); } 
-        .modal-content h3 { margin-top: 0; color: var(--header-gradient-start); font-size: 1.6rem; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid var(--calendar-header-bg); padding-bottom: 10px; }
+        .modal-content h3 { margin-top: 0; color: var(--header-gradient-start); font-size: 1.6rem; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .modal-content .settings-section h4 { font-size: 1.2rem; color: var(--card-icon-color); margin-top: 20px; margin-bottom: 15px; }
         .modal-content .input-group { margin-bottom: 15px; }
-        .modal-content .input-group label, .modal-content .control-row label, .modal-content .control-row .label-like  { display: block; margin-bottom: 6px; font-size: 0.95rem; font-weight: 600; }
-        .modal-content input[type="text"], .modal-content input[type="color"], .modal-content input[type="url"], .modal-content input[type="number"], .modal-content textarea, .modal-content input[type="range"], .modal-content select { width: 100%; padding: 10px; margin-bottom: 10px; background-color: var(--input-bg); color: var(--input-text-color); border: 1px solid var(--input-border-color); border-radius: 5px; font-size: 1rem; outline: none; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+        .modal-content .input-group label, .modal-content .control-row label, .modal-content .control-row .label-like { display: block; margin-bottom: 6px; font-size: 0.95rem; font-weight: 600; }
+        .modal-content input[type="text"], .modal-content input[type="color"], .modal-content input[type="url"], .modal-content input[type="number"], .modal-content textarea, .modal-content input[type="range"], .modal-content select { width: 100%; padding: 10px; margin-bottom: 10px; background-color: var(--input-bg); color: var(--input-text-color); border: 1px solid var(--input-border-color); border-radius: 5px; font-size: 1rem; outline: none; transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; }
         .modal-content input[type="color"] { padding: 5px; height: 40px; width: 50px; vertical-align: middle; margin-left: 5px;}
         .modal-content input[type="range"] { padding: 0; accent-color: var(--visualizer-accent-color); } 
         .modal-content input[type="text"]:focus, .modal-content input[type="color"]:focus, .modal-content input[type="url"]:focus, .modal-content input[type="number"]:focus, .modal-content textarea:focus, .modal-content input[type="range"]:focus, .modal-content select:focus { border-color: var(--card-icon-color); box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--card-icon-color) 25%, transparent); }
-        .modal-content textarea { min-height: 180px; resize: vertical; } 
         .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; margin-top: 25px; }
         .modal-buttons button { padding: 10px 18px; font-size: 0.95rem; font-weight: 600; border-radius: 5px; border: none; cursor: pointer; transition: background-color 0.3s ease, transform 0.1s ease; }
         .modal-buttons button:active { transform: scale(0.98); } 
@@ -210,14 +152,21 @@
         .modal-buttons button.secondary { background-color: #adb5bd; color: var(--text-color-dark); }
         .modal-buttons button.secondary:hover { background-color: #9098a0; }
 
+        /* Dark Mode Modal Overrides */
+        .dark-mode .modal-content { color: var(--text-color-dark); }
+        .dark-mode .modal-content h3 { color: var(--section-title-color); border-bottom-color: #40444B; }
+        .dark-mode .modal-content .settings-section h4 { color: var(--card-icon-color); }
+
         .keybind-input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 10px;}
         .keybind-input-group label { flex-basis: 220px; margin-bottom: 0; }
         .keybind-input-group input[type="text"] { flex-grow: 1; margin-bottom: 0; }
 
-        #notes-list::-webkit-scrollbar, .modal-content::-webkit-scrollbar, .modal-content textarea::-webkit-scrollbar { width: 8px; }
-        #notes-list::-webkit-scrollbar-track, .modal-content::-webkit-scrollbar-track, .modal-content textarea::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        #notes-list::-webkit-scrollbar-thumb, .modal-content::-webkit-scrollbar-thumb, .modal-content textarea::-webkit-scrollbar-thumb { background: var(--card-icon-color); border-radius: 10px; }
-        #notes-list::-webkit-scrollbar-thumb:hover, .modal-content::-webkit-scrollbar-thumb:hover, .modal-content textarea::-webkit-scrollbar-thumb:hover { background: var(--header-gradient-start); }
+        .modal-content::-webkit-scrollbar, .modal-content textarea::-webkit-scrollbar { width: 8px; }
+        .modal-content::-webkit-scrollbar-track, .modal-content textarea::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .modal-content::-webkit-scrollbar-thumb, .modal-content textarea::-webkit-scrollbar-thumb { background: var(--card-icon-color); border-radius: 10px; }
+        .modal-content::-webkit-scrollbar-thumb:hover, .modal-content textarea::-webkit-scrollbar-thumb:hover { background: var(--header-gradient-start); }
+        .dark-mode .modal-content::-webkit-scrollbar-track { background: #2C2F33; }
+
 
         .notification-container { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 12px; z-index: 2000; max-width: 320px; }
         .notification { background-color: var(--header-gradient-start); color: var(--button-primary-text-color); padding: 14px 22px; border-radius: 6px; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); opacity: 0; transform: translateX(100%); animation: slideInFadeIn 0.4s ease-out forwards; }
@@ -225,11 +174,8 @@
         @keyframes slideInFadeIn { to { opacity: 1; transform: translateX(0); } } 
         @keyframes fadeOutRight { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100%); } }
         .notification.fade-out { animation: fadeOutRight 0.4s ease-out forwards; }
-
-        #import-drop-zone { border: 2px dashed var(--input-border-color); border-radius: var(--card-border-radius); padding: 25px; text-align: center; cursor: pointer; background-color: var(--page-bg-color); color: var(--text-color-dark); margin-top: 15px; transition: border-color 0.3s ease, background-color 0.3s ease; }
-        #import-drop-zone p { margin: 0; font-size: 0.95rem; }
-        #import-drop-zone.dragover { border-color: var(--header-gradient-end); background-color: color-mix(in srgb, var(--header-gradient-end) 10%, var(--page-bg-color)); }
-        #import-notes-file-input { display: none; }
+        .dark-mode .notification { background-color: #23272A; color: #FFFFFF; }
+        .dark-mode .notification.error { background-color: var(--danger-color); }
 
         .range-slider-group { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
         .range-slider-group label { flex-basis: 200px; margin-bottom: 0; }
@@ -249,29 +195,23 @@
         .modal-content label.checkbox-label { display: inline; margin-bottom: 0; font-size: 0.9rem; }
         .modal-content .checkbox-group input[type="checkbox"] { accent-color: var(--visualizer-accent-color); }
 
-
         @media (max-width: 992px) {
-             .top-header-content h1 { font-size: 1.7rem; } #settings-button { right: 10px; } #settings-button svg { width: 24px; height: 24px; }
-             .tools-title { font-size: 1.6rem; } #program-menu { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
-             #calendar-notes-container { flex-direction: column; } #calendar-container, #notes-container { flex: none; width: 100%; } 
-             .modal-content { padding: 20px; max-width: 90%; } .modal-content h3 { font-size: 1.4rem; }
-             #notes-header { flex-direction: column; align-items: flex-start; } #notes-buttons { width: 100%; justify-content: flex-start; }
-             .modal-buttons { flex-direction: column; gap: 8px; } .modal-buttons button { width: 100%; }
-             .modal-content .control-row { flex-direction: column; align-items: flex-start; }
-             .modal-content .control-row .input-value-pair { width: 100%; }
-             .modal-content .control-row .input-value-pair input[type="range"], .modal-content .control-row .input-value-pair select { width: calc(100% - 50px); }
+            .top-header-content h1 { font-size: 1.7rem; } #settings-button { right: 10px; } #settings-button svg { width: 24px; height: 24px; }
+            .tools-title { font-size: 1.6rem; } #program-menu { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+            .modal-content { padding: 20px; max-width: 90%; } .modal-content h3 { font-size: 1.4rem; }
+            .modal-buttons { flex-direction: column; gap: 8px; } .modal-buttons button { width: 100%; }
+            .modal-content .control-row { flex-direction: column; align-items: flex-start; }
+            .modal-content .control-row .input-value-pair { width: 100%; }
+            .modal-content .control-row .input-value-pair input[type="range"], .modal-content .control-row .input-value-pair select { width: calc(100% - 50px); }
         }
-         @media (max-width: 576px) {
-              .top-header-content h1 { font-size: 1.5rem; } #settings-button { padding: 5px; } #settings-button svg { width: 22px; height: 22px; }
-              .tools-title { font-size: 1.4rem; } #calendar-notes-section > h2 { font-size: 1.4rem; }
-              #program-menu { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
-              .program-item { padding: 15px 10px; min-height: 120px; } .program-item .item-icon { font-size: 2rem; margin-bottom: 8px;} .program-item .item-title { font-size: 0.9rem; }
-              #calendar-container, #notes-container { padding: 15px; } .calendar-day { font-size: 0.85rem; }
-              #notes-buttons button { width: auto; padding: 7px 10px; font-size: 0.85rem; } 
-              .modal-content textarea { min-height: 120px; }
-              .keybind-input-group { flex-direction: column; align-items: flex-start; } .keybind-input-group label { flex-basis: auto; }
-              .range-slider-group { flex-direction: column; align-items: flex-start; } .range-slider-group label { flex-basis: auto; margin-bottom: 5px; }
-         }
+        @media (max-width: 576px) {
+            .top-header-content h1 { font-size: 1.5rem; } #settings-button { padding: 5px; } #settings-button svg { width: 22px; height: 22px; }
+            .tools-title { font-size: 1.4rem; }
+            #program-menu { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+            .program-item { padding: 15px 10px; min-height: 120px; } .program-item .item-icon { font-size: 2rem; margin-bottom: 8px;} .program-item .item-title { font-size: 0.9rem; }
+            .keybind-input-group { flex-direction: column; align-items: flex-start; } .keybind-input-group label { flex-basis: auto; }
+            .range-slider-group { flex-direction: column; align-items: flex-start; } .range-slider-group label { flex-basis: auto; margin-bottom: 5px; }
+        }
     </style>
 </head>
 <body class=""> 
@@ -291,47 +231,8 @@
         <h2 class="tools-title">Tools</h2>
         <div id="programs-section" class="content-section"><div id="program-menu"></div></div>
         <div id="program-explanation"><p>Hover over a program card above to see its explanation here.</p></div>
-        <div id="calendar-notes-section" class="content-section">
-            <h2>Date Organizer</h2>
-            <div id="calendar-notes-container">
-                <div id="calendar-container">
-                    <div id="calendar-header">
-                        <button id="prev-month-btn" aria-label="Previous Month">&lt;</button>
-                        <div id="current-month-year"></div>
-                        <button id="next-month-btn" aria-label="Next Month">&gt;</button>
-                    </div>
-                    <div id="calendar-weekdays"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
-                    <div id="calendar-days"></div>
-                </div>
-                <div id="notes-container">
-                     <div id="notes-header">
-                        <h3 id="notes-heading">Notepad</h3>
-                         <div id="notes-buttons">
-                            <button id="create-note-btn" style="display: none;">+ New Note</button>
-                            <button id="delete-all-notes-btn" style="display: none;">Delete All</button>
-                            <button id="save-all-notes-btn" style="display: none;">Save All</button> 
-                         </div>
-                     </div>
-                    <ul id="notes-list"><li style="text-align: center; color: #777; font-style: italic; padding:10px 0;">Select a day to see or add notes.</li></ul>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <div id="name-note-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Name Your Note</h3>
-            <input type="text" id="note-name-input" placeholder="Enter note filename...">
-            <div class="modal-buttons"><button id="save-note-name-btn" class="primary">Create</button><button class="cancel" id="cancel-note-name-btn">Cancel</button></div>
-        </div>
-    </div>
-    <div id="editor-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 id="editor-note-title">Note Editor</h3>
-            <textarea id="note-editor-textarea" placeholder="Start writing..."></textarea>
-            <div class="modal-buttons"><button id="save-note-content-btn" class="primary">Save</button><button id="copy-editor-content-btn" class="cancel">Copy to Clipboard</button><button class="cancel" id="close-editor-btn">Close</button></div>
-        </div>
-    </div>
     <div id="batch-count-modal" class="modal-overlay">
         <div class="modal-content">
             <h3>Batch Count Calculator Options</h3>
@@ -364,7 +265,11 @@
                 </div>
 
             <div class="settings-section">
-                <h4>Appearance Settings (UI Elements)</h4>
+                <h4>Appearance Settings (UI)</h4>
+                 <div class="checkbox-group">
+                    <input type="checkbox" id="dark-mode-toggle">
+                    <label for="dark-mode-toggle">Enable Dark Mode</label>
+                </div>
                 <div class="checkbox-group">
                     <input type="checkbox" id="enable-translucency-input">
                     <label for="enable-translucency-input">Enable Translucent UI Elements</label>
@@ -432,28 +337,10 @@
                 </div>
             </div>
 
-
-            <div class="settings-section">
-                <h4>Data Management (Notepad)</h4>
-                <div class="modal-buttons" style="justify-content: flex-start;">
-                    <button id="export-notes-btn" class="primary">Export All Notes</button>
-                </div>
-                 <input type="file" id="import-notes-file-input" accept=".json" aria-label="Import notes file">
-                 <div id="import-drop-zone" role="button" tabindex="0" aria-labelledby="import-drop-zone-label">
-                    <p id="import-drop-zone-label">Drag & Drop your notes JSON file here, or click to select file.</p>
-                    <p style="font-size:0.8em; opacity:0.7;">(Importing will overwrite existing notes)</p>
-                </div>
-                <p style="font-size: 0.85rem; color: var(--text-color-dark); opacity: 0.8; margin-top:10px;">
-                    Export all your notepad data as a JSON file. You can import this file later to restore your notes.
-                    <strong>Warning:</strong> Importing will overwrite any current notes in the application.
-                </p>
-            </div>
-
             <div class="settings-section">
                 <h4>Keybinds</h4>
-                <p style="font-size: 0.85rem; color: var(--text-color-dark); opacity: 0.8; margin-bottom:15px;">
-                    Define keyboard shortcuts. Use keys like 'N', '1', or with modifiers: 'Alt+1', 'Control+S', 'Control+ArrowLeft'.
-                    Avoid single letters if they conflict with typing in input fields.
+                <p style="font-size: 0.85rem; opacity: 0.8; margin-bottom:15px;">
+                    Define keyboard shortcuts. Use keys like 'N', '1', or with modifiers: 'Alt+1', 'Control+S'.
                 </p>
                 <h5>Global & Tool Launching</h5>
                 <div class="keybind-input-group"><label for="keybind-param-extractor">Parameter Extractor:</label><input type="text" id="keybind-param-extractor" placeholder="e.g., Alt+1"></div>
@@ -462,15 +349,6 @@
                 <div class="keybind-input-group"><label for="keybind-tool4">Tool 4 (Future):</label><input type="text" id="keybind-tool4" placeholder="e.g., Alt+4"></div>
                 <div class="keybind-input-group"><label for="keybind-tool5">Tool 5 (Future):</label><input type="text" id="keybind-tool5" placeholder="e.g., Alt+5"></div>
                 <div class="keybind-input-group"><label for="keybind-open-settings">Open Settings:</label><input type="text" id="keybind-open-settings" placeholder="e.g., Alt+O"></div>
-                <h5>Date Organizer - Calendar</h5>
-                <div class="keybind-input-group"><label for="keybind-prev-month">Previous Month:</label><input type="text" id="keybind-prev-month" placeholder="e.g., Control+ArrowLeft"></div>
-                <div class="keybind-input-group"><label for="keybind-next-month">Next Month:</label><input type="text" id="keybind-next-month" placeholder="e.g., Control+ArrowRight"></div>
-                <div class="keybind-input-group"><label for="keybind-goto-today">Go to Today:</label><input type="text" id="keybind-goto-today" placeholder="e.g., Control+T"></div>
-                <h5>Date Organizer - Notepad (Day Selected)</h5>
-                <div class="keybind-input-group"><label for="keybind-new-note">New Note:</label><input type="text" id="keybind-new-note" placeholder="e.g., N"></div>
-                <div class="keybind-input-group"><label for="keybind-delete-all-notes">Delete All Notes (Selected Day):</label><input type="text" id="keybind-delete-all-notes" placeholder="e.g., Control+Shift+Delete"></div>
-                <h5>Date Organizer - Note Editor (Modal Open)</h5>
-                <div class="keybind-input-group"><label for="keybind-save-note">Save Current Note:</label><input type="text" id="keybind-save-note" placeholder="e.g., Control+S"></div>
                 <div class="modal-buttons"><button id="save-keybinds-btn" class="primary">Save Keybinds</button><button id="reset-keybinds-btn" class="secondary">Reset Keybinds</button></div>
             </div>
             
@@ -481,18 +359,40 @@
     <div id="notification-container" class="notification-container"></div>
 
     <script>
-        // --- Global Variables & DOM Element References (condensed for brevity) ---
-        const calendarDaysGrid = document.getElementById('calendar-days'); const currentMonthYearDisplay = document.getElementById('current-month-year'); const prevMonthBtn = document.getElementById('prev-month-btn'); const nextMonthBtn = document.getElementById('next-month-btn'); const notesList = document.getElementById('notes-list'); const notesHeading = document.getElementById('notes-heading'); const createNoteBtn = document.getElementById('create-note-btn'); const deleteAllNotesBtn = document.getElementById('delete-all-notes-btn'); const saveAllNotesBtn = document.getElementById('save-all-notes-btn'); const nameNoteModal = document.getElementById('name-note-modal'); const noteNameInput = document.getElementById('note-name-input'); const saveNoteNameBtn = document.getElementById('save-note-name-btn'); const cancelNoteNameBtn = document.getElementById('cancel-note-name-btn'); const editorModal = document.getElementById('editor-modal'); const editorNoteTitle = document.getElementById('editor-note-title'); const noteEditorTextarea = document.getElementById('note-editor-textarea'); const saveNoteContentBtn = document.getElementById('save-note-content-btn'); const copyEditorContentBtn = document.getElementById('copy-editor-content-btn'); const closeEditorBtn = document.getElementById('close-editor-btn'); const programExplanation = document.getElementById('program-explanation'); const programMenu = document.getElementById('program-menu'); const batchCountModal = document.getElementById('batch-count-modal'); const batchCountHighestBtn = document.getElementById('batch-count-highest-btn'); const batchCountNearestBtn = document.getElementById('batch-count-nearest-btn'); const cancelBatchCountBtn = document.getElementById('cancel-batch-count-btn'); const settingsButton = document.getElementById('settings-button'); const settingsModal = document.getElementById('settings-modal'); const closeSettingsBtn = document.getElementById('close-settings-btn');
-        const headerGradientStartInput = document.getElementById('header-gradient-start-input'); const headerGradientEndInput = document.getElementById('header-gradient-end-input'); const headerGradientAngleInput = document.getElementById('header-gradient-angle-input');
-        // ApplyThemeBtn and ResetThemeBtn removed as their functionality is merged
+        // --- Global Variables & DOM Element References ---
+        const programExplanation = document.getElementById('program-explanation');
+        const programMenu = document.getElementById('program-menu');
+        const batchCountModal = document.getElementById('batch-count-modal');
+        const batchCountHighestBtn = document.getElementById('batch-count-highest-btn');
+        const batchCountNearestBtn = document.getElementById('batch-count-nearest-btn');
+        const cancelBatchCountBtn = document.getElementById('cancel-batch-count-btn');
+        const settingsButton = document.getElementById('settings-button');
+        const settingsModal = document.getElementById('settings-modal');
+        const closeSettingsBtn = document.getElementById('close-settings-btn');
         
-        // Page BG Image/Blur inputs removed
-        const enableTranslucencyInput = document.getElementById('enable-translucency-input'); const uiElementBaseColorInput = document.getElementById('ui-element-base-color-input'); const uiElementOpacityInput = document.getElementById('ui-element-opacity-input'); const uiElementOpacityValueDisplay = document.getElementById('ui-element-opacity-value'); const uiElementBackdropBlurInput = document.getElementById('ui-element-backdrop-blur-input'); const uiElementBackdropBlurValueDisplay = document.getElementById('ui-element-backdrop-blur-value'); const applyAppearanceBtn = document.getElementById('apply-appearance-btn'); const resetAppearanceBtn = document.getElementById('reset-appearance-btn');
+        // Appearance Settings DOM Elements
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const headerGradientStartInput = document.getElementById('header-gradient-start-input');
+        const headerGradientEndInput = document.getElementById('header-gradient-end-input');
+        const headerGradientAngleInput = document.getElementById('header-gradient-angle-input');
+        const enableTranslucencyInput = document.getElementById('enable-translucency-input');
+        const uiElementBaseColorInput = document.getElementById('ui-element-base-color-input');
+        const uiElementOpacityInput = document.getElementById('ui-element-opacity-input');
+        const uiElementOpacityValueDisplay = document.getElementById('ui-element-opacity-value');
+        const uiElementBackdropBlurInput = document.getElementById('ui-element-backdrop-blur-input');
+        const uiElementBackdropBlurValueDisplay = document.getElementById('ui-element-backdrop-blur-value');
+        const applyAppearanceBtn = document.getElementById('apply-appearance-btn');
+        const resetAppearanceBtn = document.getElementById('reset-appearance-btn');
         
-        const exportNotesBtn = document.getElementById('export-notes-btn'); const importDropZone = document.getElementById('import-drop-zone'); const importNotesFileInput = document.getElementById('import-notes-file-input');
-        const keybindParamExtractorInput = document.getElementById('keybind-param-extractor'); const keybindBatchCalculatorInput = document.getElementById('keybind-batch-calculator'); 
-        const keybindCsvToJsonInput = document.getElementById('keybind-csv-to-json'); // Added for new tool
-        const keybindTool4Input = document.getElementById('keybind-tool4'); const keybindTool5Input = document.getElementById('keybind-tool5'); const keybindOpenSettingsInput = document.getElementById('keybind-open-settings'); const keybindPrevMonthInput = document.getElementById('keybind-prev-month'); const keybindNextMonthInput = document.getElementById('keybind-next-month'); const keybindGotoTodayInput = document.getElementById('keybind-goto-today'); const keybindNewNoteInput = document.getElementById('keybind-new-note'); const keybindDeleteAllNotesInput = document.getElementById('keybind-delete-all-notes'); const keybindSaveNoteInput = document.getElementById('keybind-save-note'); const saveKeybindsBtn = document.getElementById('save-keybinds-btn'); const resetKeybindsBtn = document.getElementById('reset-keybinds-btn');
+        // Keybinds DOM Elements
+        const keybindParamExtractorInput = document.getElementById('keybind-param-extractor');
+        const keybindBatchCalculatorInput = document.getElementById('keybind-batch-calculator'); 
+        const keybindCsvToJsonInput = document.getElementById('keybind-csv-to-json');
+        const keybindTool4Input = document.getElementById('keybind-tool4');
+        const keybindTool5Input = document.getElementById('keybind-tool5');
+        const keybindOpenSettingsInput = document.getElementById('keybind-open-settings');
+        const saveKeybindsBtn = document.getElementById('save-keybinds-btn');
+        const resetKeybindsBtn = document.getElementById('reset-keybinds-btn');
 
         // --- Background Visualizer DOM Elements ---
         const particleCanvas = document.getElementById('particleCanvas');
@@ -529,13 +429,9 @@
             resetBoxSettingsBtn: document.getElementById('resetBoxSettingsBtn')
         };
 
-
-        let currentMonth = new Date().getMonth(); let currentYear = new Date().getFullYear();
-        let selectedDate = null; let notesData = {}; 
-
-        const NOTES_STORAGE_KEY = 'adoInsightsToolNotes_v8_settings';
-        const APPEARANCE_STORAGE_KEY = 'adoInsightsToolAppearance_v3_visualizer'; // Incremented version
-        const KEYBINDS_STORAGE_KEY = 'adoInsightsToolKeybinds_v2'; // Keep version or increment if structure changes significantly
+        // --- State and Constants ---
+        const APPEARANCE_STORAGE_KEY = 'adoInsightsToolAppearance_v4_darkmode'; // Incremented version
+        const KEYBINDS_STORAGE_KEY = 'adoInsightsToolKeybinds_v3_no_notes';
         const NOTIFICATION_FADE_DURATION = 400;
 
         // --- Background Visualizer Default Settings & Data ---
@@ -549,52 +445,44 @@
         };
         
         let particlesArray = [];
-        const mouseForParticles = { x: null, y: null, radius: 100 }; // Renamed to avoid conflict if 'mouse' is used elsewhere
+        const mouseForParticles = { x: null, y: null, radius: 100 };
         let animationFrameIdVisualizer;
 
 
         const DEFAULT_APPEARANCE = {
+            darkMode: false,
             headerGradientStart: '#4A0082', headerGradientEnd: '#D4529D', headerGradientAngle: 105,
-            // pageBgImageUrl and pageBgBlur removed
             enableTranslucency: false,
             uiElementBaseColor: '#FFFFFF', uiElementOpacity: 0.85, uiElementBackdropBlur: 5,
-            backgroundVisualizer: { ...defaultBackgroundVisualizerSettings } // Added visualizer defaults
+            backgroundVisualizer: { ...defaultBackgroundVisualizerSettings }
         };
         let currentAppearanceSettings = JSON.parse(JSON.stringify(DEFAULT_APPEARANCE)); // Deep copy
 
         const DEFAULT_KEYBINDS = { 
             paramExtractor: 'Alt+1', 
             batchCalculator: 'Alt+2', 
-            csvToJson: 'Alt+3', // New tool's keybind
+            csvToJson: 'Alt+3',
             tool4: 'Alt+4', 
             tool5: 'Alt+5', 
             openSettings: 'Alt+O', 
-            prevMonth: 'Control+ArrowLeft', 
-            nextMonth: 'Control+ArrowRight', 
-            gotoToday: 'Control+T', 
-            newNote: 'N', 
-            deleteAllNotes: 'Control+Shift+Delete', 
-            saveNote: 'Control+S' 
         };
         let currentKeybinds = { ...DEFAULT_KEYBINDS };
 
         const programs = [ 
             { id: 'parameter-extractor', name: 'Parameter Extractor', icon: '🛠️', description: "Extracts URL parameters from various Azure Function JSON payloads.", file: 'Tools/parameter_tool.html', keybindAction: 'paramExtractor' }, 
             { id: 'batch-count-calculator', name: 'Batch Count Calculator', icon: '🧮', description: "Calculate batch sizes. Opens options modal.", modal: batchCountModal, keybindAction: 'batchCalculator' }, 
-            { id: 'csv-to-json-processor', name: 'CSV to JSON Processor', icon: '📄', description: "Filters CSV data and converts it to structured JSON.", file: 'Tools/data_validation_tool_themed.html', keybindAction: 'csvToJson'}, // New tool added
+            { id: 'csv-to-json-processor', name: 'CSV to JSON Processor', icon: '📄', description: "Filters CSV data and converts it to structured JSON.", file: 'Tools/data_validation_tool_themed.html', keybindAction: 'csvToJson'},
             { id: 'tool-4', name: 'Tool 4 (Future)', icon: '⚙️', description: "This tool isn't implemented yet.", file: '#', keybindAction: 'tool4'}, 
             { id: 'tool-5', name: 'Tool 5 (Future)', icon: '⚙️', description: "This tool isn't implemented yet.", file: '#', keybindAction: 'tool5'} 
         ];
-        const renameIconSVG = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/></svg>`;
-        const deleteIconSVG = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z'/></svg>`;
-
+       
         function createProgramCard(item) { const isLink = item.file && item.file !== '#'; const card = document.createElement(isLink ? 'a' : 'div'); card.className = 'program-item'; card.id = `${item.id}-card`; let fullDesc = item.description; if (isLink) { card.href = item.file; card.target = '_blank'; card.rel = 'noopener noreferrer'; fullDesc = `Launches the ${item.name}. ${item.description}`; } else if (item.modal) { card.addEventListener('click', () => showModal(item.modal)); fullDesc = `Opens the ${item.name}. ${item.description}`; } else if (item.file === '#') { card.style.cursor = 'not-allowed'; card.addEventListener('click', (e) => { e.preventDefault(); showNotification(`"${item.name}" is not yet implemented.`, 3000, 'info'); }); } card.innerHTML = `<span class="item-icon">${item.icon || '⭐'}</span><span class="item-title">${item.name}</span>`; card.addEventListener('mouseover', () => { programExplanation.textContent = fullDesc; programExplanation.classList.add('active'); }); card.addEventListener('mouseout', () => { programExplanation.innerHTML = '<p>Hover over a program card above to see its explanation here.</p>'; programExplanation.classList.remove('active'); }); return card; }
         function populateMenus() { programMenu.innerHTML = ''; programs.forEach(prog => programMenu.appendChild(createProgramCard(prog)));}
 
         function hexToRgb(hex) { const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i; hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b); const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex); return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : null; }
         
         // --- Background Visualizer Functions ---
-        const boxBackgroundFunctions = { // Must use currentAppearanceSettings.backgroundVisualizer
+        const boxBackgroundFunctions = {
             'theme_boxes': (i) => (i % 2 === 0) ? 'rgb(106, 13, 173)' : 'rgb(255, 165, 0)',
             'monochrome_boxes': () => { const gray = Math.floor(Math.random() * 55) + 200; return `rgb(${gray},${gray},${gray})`; },
             'solid_custom': () => currentAppearanceSettings.backgroundVisualizer.boxSolidColor1,
@@ -638,10 +526,10 @@
             const baseLineColorHex = lineColorPalette[0] || '#6A0DAD'; 
             const rgb = hexToRgb(baseLineColorHex);
             if (!rgb) return;
-            const [r,g,b_val] = rgb; // Renamed b to b_val to avoid conflict with loop variable
+            const [r,g,b_val] = rgb;
 
             for (let a = 0; a < particlesArray.length; a++) {
-                for (let b_loop = a + 1; b_loop < particlesArray.length; b_loop++) { // Renamed b to b_loop
+                for (let b_loop = a + 1; b_loop < particlesArray.length; b_loop++) {
                     let dx = particlesArray[a].x - particlesArray[b_loop].x;
                     let dy = particlesArray[a].y - particlesArray[b_loop].y;
                     let dist = Math.sqrt(dx * dx + dy * dy);
@@ -689,12 +577,12 @@
             particleCanvas.width = window.innerWidth;
             particleCanvas.height = window.innerHeight;
             initParticles();
-            generateFloatingBoxes(); // This also handles enabling/disabling the area
+            generateFloatingBoxes();
             animateVisualizer();
         }
 
         // --- Settings Management for Appearance & Visualizer ---
-        function getControlValue(control) { // Helper for visualizer controls
+        function getControlValue(control) {
             if (!control) return undefined;
             if (control.type === 'checkbox') return control.checked;
             if (control.type === 'range' || control.type === 'number') return parseFloat(control.value);
@@ -760,15 +648,22 @@
             visSettings.boxBorderWidth = getControlValue(visControls.boxBorderWidthSlider);
             visSettings.boxBorderColor = getControlValue(visControls.boxBorderColorInput);
             
-            mouseForParticles.radius = visSettings.mouseRepelRadius; // Update live mouse radius for particles
+            mouseForParticles.radius = visSettings.mouseRepelRadius;
         }
         
-        function applyAppearanceSettings(settings, source = "manual") { // Modified to accept settings and source
+        function applyAppearanceSettings(settings, source = "manual") {
             const root = document.documentElement;
+
+            // Dark Mode
+            if (settings.darkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+
             root.style.setProperty('--header-gradient-start', settings.headerGradientStart);
             root.style.setProperty('--header-gradient-end', settings.headerGradientEnd);
             root.style.setProperty('--header-gradient-angle', `${settings.headerGradientAngle}deg`);
-            // Page Background Image/Blur CSS variables removed
 
             if (settings.enableTranslucency) {
                 document.body.classList.add('translucent-ui');
@@ -785,15 +680,12 @@
                 document.body.classList.remove('translucent-ui');
             }
             
-            // Apply background visualizer settings
             if (source === "manual" || source === "init" || source === "reset") {
-                 // Update currentAppearanceSettings.backgroundVisualizer from UI if manual
                 if (source === "manual") collectBackgroundVisualizerSettingsFromUI();
-                // Then ensure UI display values and conditional visibility are correct
                 updateBackgroundVisualizerUIFromSettings(); 
                 startOrRestartVisualizer();
             } else if (source === "resize") {
-                startOrRestartVisualizer(); // Just re-init with current settings for new dimensions
+                startOrRestartVisualizer();
             }
         }
 
@@ -804,11 +696,10 @@
             if (storedSettings) {
                 try {
                     const parsed = JSON.parse(storedSettings);
-                    // Merge carefully to ensure new properties get defaults
                     currentAppearanceSettings = {
-                        ...JSON.parse(JSON.stringify(DEFAULT_APPEARANCE)), // Start with deep copy of defaults
-                        ...parsed, // Overlay stored top-level settings
-                        backgroundVisualizer: { // Merge visualizer settings specifically
+                        ...JSON.parse(JSON.stringify(DEFAULT_APPEARANCE)),
+                        ...parsed,
+                        backgroundVisualizer: {
                             ...defaultBackgroundVisualizerSettings,
                             ...(parsed.backgroundVisualizer || {})
                         }
@@ -820,16 +711,15 @@
             } else {
                 currentAppearanceSettings = JSON.parse(JSON.stringify(DEFAULT_APPEARANCE));
             }
-            applyAppearanceSettings(currentAppearanceSettings, "init"); // Apply loaded or default settings
-            updateAppearanceSettingsUI(currentAppearanceSettings); // Update all UI controls
+            applyAppearanceSettings(currentAppearanceSettings, "init");
+            updateAppearanceSettingsUI(currentAppearanceSettings);
         }
 
-        function updateAppearanceSettingsUI(settings) { // Populates all settings modal UI
+        function updateAppearanceSettingsUI(settings) {
+            darkModeToggle.checked = settings.darkMode;
             headerGradientStartInput.value = settings.headerGradientStart; 
             headerGradientEndInput.value = settings.headerGradientEnd; 
             headerGradientAngleInput.value = settings.headerGradientAngle;
-            // Page BG Image/Blur UI elements removed
-
             enableTranslucencyInput.checked = settings.enableTranslucency; 
             uiElementBaseColorInput.value = settings.uiElementBaseColor; 
             uiElementOpacityInput.value = settings.uiElementOpacity; 
@@ -837,7 +727,7 @@
             uiElementBackdropBlurInput.value = settings.uiElementBackdropBlur; 
             if(uiElementBackdropBlurValueDisplay) uiElementBackdropBlurValueDisplay.textContent = `${settings.uiElementBackdropBlur}px`;
             
-            updateBackgroundVisualizerUIFromSettings(); // Update visualizer specific controls
+            updateBackgroundVisualizerUIFromSettings();
         }
 
         function saveKeybindsToStorage(keybinds) { localStorage.setItem(KEYBINDS_STORAGE_KEY, JSON.stringify(keybinds)); }
@@ -850,49 +740,28 @@
             } 
             keybindParamExtractorInput.value = currentKeybinds.paramExtractor; 
             keybindBatchCalculatorInput.value = currentKeybinds.batchCalculator; 
-            if (keybindCsvToJsonInput) keybindCsvToJsonInput.value = currentKeybinds.csvToJson; // Load new keybind
+            if (keybindCsvToJsonInput) keybindCsvToJsonInput.value = currentKeybinds.csvToJson;
             keybindTool4Input.value = currentKeybinds.tool4; 
             keybindTool5Input.value = currentKeybinds.tool5; 
             keybindOpenSettingsInput.value = currentKeybinds.openSettings; 
-            keybindPrevMonthInput.value = currentKeybinds.prevMonth; 
-            keybindNextMonthInput.value = currentKeybinds.nextMonth; 
-            keybindGotoTodayInput.value = currentKeybinds.gotoToday; 
-            keybindNewNoteInput.value = currentKeybinds.newNote; 
-            keybindDeleteAllNotesInput.value = currentKeybinds.deleteAllNotes; 
-            keybindSaveNoteInput.value = currentKeybinds.saveNote; 
         }
-        function loadNotes() { const storedNotes = localStorage.getItem(NOTES_STORAGE_KEY); if (storedNotes) { try { notesData = JSON.parse(storedNotes); } catch (e) { console.error("Failed to parse notes from localStorage:", e); notesData = {}; }} else { notesData = {}; } }
-        function saveNotes() { try { localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(notesData)); } catch (e) { console.error("Failed to save notes to localStorage:", e); showNotification("Error saving notes. Storage might be full.", 5000, 'error');}}
-        function renderCalendar(month, year) { calendarDaysGrid.innerHTML = ''; const firstDayOfMonth = new Date(year, month, 1); const daysInMonth = new Date(year, month + 1, 0).getDate(); const lastDayOfPrevMonth = new Date(year, month, 0).getDate(); const startingDayOfWeek = firstDayOfMonth.getDay(); currentMonthYearDisplay.textContent = new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' }); const today = new Date(); const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`; for (let i = startingDayOfWeek; i > 0; i--) { const dayElement = document.createElement('div'); dayElement.classList.add('calendar-day', 'inactive'); dayElement.textContent = lastDayOfPrevMonth - i + 1; calendarDaysGrid.appendChild(dayElement); } for (let i = 1; i <= daysInMonth; i++) { const dayElement = document.createElement('div'); dayElement.classList.add('calendar-day'); dayElement.textContent = i; const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`; dayElement.dataset.date = dateString; if (dateString === todayString) dayElement.classList.add('today'); if (notesData[dateString] && notesData[dateString].length > 0) { const noteIndicator = document.createElement('div'); noteIndicator.classList.add('note-indicator'); dayElement.appendChild(noteIndicator); } dayElement.addEventListener('click', handleDayClick); calendarDaysGrid.appendChild(dayElement); } const totalDaysRendered = calendarDaysGrid.children.length; const remainingCells = (totalDaysRendered % 7 === 0) ? 0 : 7 - (totalDaysRendered % 7); for (let i = 1; i <= remainingCells; i++) { const dayElement = document.createElement('div'); dayElement.classList.add('calendar-day', 'inactive'); dayElement.textContent = i; calendarDaysGrid.appendChild(dayElement); } }
-        function handleDayClick(event) { const clickedDay = event.target.closest('.calendar-day'); if (!clickedDay || clickedDay.classList.contains('inactive')) return; const previouslySelectedDay = calendarDaysGrid.querySelector('.calendar-day.selected'); if (previouslySelectedDay) previouslySelectedDay.classList.remove('selected'); clickedDay.classList.add('selected'); selectedDate = clickedDay.dataset.date; const dateObj = new Date(selectedDate + 'T00:00:00'); notesHeading.textContent = `Notes for ${dateObj.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`; createNoteBtn.style.display = 'inline-block'; const notesExistForDay = notesData[selectedDate] && notesData[selectedDate].length > 0; deleteAllNotesBtn.style.display = notesExistForDay ? 'inline-block' : 'none'; saveAllNotesBtn.style.display = 'none'; displayNotesForSelectedDay(); }
-        function displayNotesForSelectedDay() { notesList.innerHTML = ''; const placeholderNoDaySelected = `<li style="text-align:center;color:#777;font-style:italic;padding:10px 0;">Select a day to see or add notes.</li>`; const placeholderNoNotes = `<li style="text-align:center;color:#777;font-style:italic;padding:10px 0;">No notes for this day. Click "+ New Note" to add one.</li>`; if (!selectedDate) { notesList.innerHTML = placeholderNoDaySelected; createNoteBtn.style.display = 'none'; deleteAllNotesBtn.style.display = 'none'; saveAllNotesBtn.style.display = 'none'; return; } const notesForDay = notesData[selectedDate] || []; if (notesForDay.length === 0) { notesList.innerHTML = placeholderNoNotes; deleteAllNotesBtn.style.display = 'none'; saveAllNotesBtn.style.display = 'none'; } else { notesForDay.forEach((note, index) => { const listItem = document.createElement('li'); listItem.classList.add('note-item'); listItem.dataset.index = index; const noteNameSpan = document.createElement('span'); noteNameSpan.className = 'note-name'; noteNameSpan.title = note.name; noteNameSpan.textContent = note.name; listItem.appendChild(noteNameSpan); const actionsDiv = document.createElement('div'); actionsDiv.className = 'note-actions'; actionsDiv.innerHTML = `<button class="note-action-button rename-button" aria-label="Rename Note" title="Rename">${renameIconSVG}<span class="tooltip">Rename</span></button><button class="note-action-button delete-button" aria-label="Delete Note" title="Delete">${deleteIconSVG}<span class="tooltip">Delete</span></button>`; listItem.appendChild(actionsDiv); listItem.querySelector('.rename-button').addEventListener('click', (e) => { e.stopPropagation(); renameNote(selectedDate, index); }); listItem.querySelector('.delete-button').addEventListener('click', (e) => { e.stopPropagation(); deleteNote(selectedDate, index); }); listItem.addEventListener('click', () => openNoteEditor(selectedDate, index)); notesList.appendChild(listItem); }); deleteAllNotesBtn.style.display = 'inline-block'; saveAllNotesBtn.style.display = 'none'; } }
-        function escapeHTML(str) { const p = document.createElement('p'); p.textContent = str; return p.innerHTML; }
+
         function showModal(modalElement) { if (modalElement) modalElement.classList.add('visible'); }
         function hideModal(modalElement) { if (modalElement) modalElement.classList.remove('visible'); }
-        createNoteBtn.addEventListener('click', () => { if (selectedDate) { showModal(nameNoteModal); noteNameInput.value = ''; noteNameInput.focus(); } else { showNotification("Please select a day first to create a note.", 3000, 'error'); }});
-        deleteAllNotesBtn.addEventListener('click', () => { if (!selectedDate || !notesData[selectedDate] || notesData[selectedDate].length === 0) { showNotification("No notes to delete for the selected day.", 3000, 'error'); return; } const dateObj = new Date(selectedDate + 'T00:00:00'); if (confirm(`Are you sure you want to delete all notes for ${dateObj.toLocaleDateString()}?`)) { delete notesData[selectedDate]; saveNotes(); const dayElementWithIndicator = calendarDaysGrid.querySelector(`.calendar-day[data-date="${selectedDate}"] .note-indicator`); if (dayElementWithIndicator) dayElementWithIndicator.remove(); displayNotesForSelectedDay(); showNotification(`All notes for ${dateObj.toLocaleDateString()} have been deleted.`, 3000); } });
-        saveAllNotesBtn.addEventListener('click', () => { if (!selectedDate || !notesData[selectedDate] || notesData[selectedDate].length === 0) { showNotification("No notes to save for the selected day.", 3000, 'error'); return; } const notesToSave = notesData[selectedDate]; showNotification(`Saving ${notesToSave.length} note(s)...`, 2000); notesToSave.forEach(note => { const blob = new Blob([note.content], { type: 'text/plain;charset=utf-8' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); const safeFilename = (note.name || 'untitled_note').replace(/[^\w\s.-]/gi, '_'); link.download = `${safeFilename}.txt`; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); }); showNotification("All notes for the selected day have been downloaded as individual files!", 3000); });
-        function renameNote(dateString, noteIndex) { const note = notesData[dateString]?.[noteIndex]; if (!note) { showNotification("Error: Could not find the note to rename.", 3000, 'error'); return; } const newName = prompt(`Rename note "${note.name}" to:`, note.name); if (newName === null || newName.trim() === "" || newName.trim() === note.name) return; const trimmedNewName = newName.trim(); if (notesData[dateString].some((nt, idx) => idx !== noteIndex && nt.name === trimmedNewName)) { showNotification(`A note with the name "${trimmedNewName}" already exists for this day.`, 4000, 'error'); return; } notesData[dateString][noteIndex].name = trimmedNewName; saveNotes(); displayNotesForSelectedDay(); showNotification(`Note renamed to "${trimmedNewName}".`, 3000); }
-        function deleteNote(dateString, noteIndex) { const note = notesData[dateString]?.[noteIndex]; if (!note) { showNotification("Error: Could not find the note to delete.", 3000, 'error'); return; } if (confirm(`Are you sure you want to delete the note "${note.name}"?`)) { notesData[dateString].splice(noteIndex, 1); if (notesData[dateString].length === 0) { delete notesData[dateString]; const dayElementWithIndicator = calendarDaysGrid.querySelector(`.calendar-day[data-date="${dateString}"] .note-indicator`); if (dayElementWithIndicator) dayElementWithIndicator.remove(); } saveNotes(); displayNotesForSelectedDay(); showNotification(`Note "${note.name}" deleted.`, 3000); } }
-        saveNoteNameBtn.addEventListener('click', () => { const noteName = noteNameInput.value.trim(); if (!selectedDate) { showNotification("No day selected. Cannot create note.", 3000, 'error'); hideModal(nameNoteModal); return; } if (!noteName) { showNotification("Note name cannot be empty.", 3000, 'error'); noteNameInput.focus(); return; } if (!notesData[selectedDate]) notesData[selectedDate] = []; if (notesData[selectedDate].some(note => note.name === noteName)) { showNotification(`A note with the name "${noteName}" already exists for this day.`, 4000, 'error'); noteNameInput.focus(); return; } const newNote = { name: noteName, content: '' }; notesData[selectedDate].push(newNote); saveNotes(); displayNotesForSelectedDay(); const dayElement = calendarDaysGrid.querySelector(`.calendar-day[data-date="${selectedDate}"]`); if (dayElement && !dayElement.querySelector('.note-indicator')) { const indicator = document.createElement('div'); indicator.classList.add('note-indicator'); dayElement.appendChild(indicator); } hideModal(nameNoteModal); openNoteEditor(selectedDate, notesData[selectedDate].length - 1); });
-        cancelNoteNameBtn.addEventListener('click', () => { hideModal(nameNoteModal); noteNameInput.value = ''; });
-        function openNoteEditor(dateString, noteIndex) { const note = notesData[dateString]?.[noteIndex]; if (!note) { showNotification("Error loading note.", 3000, 'error'); return; } editorNoteTitle.textContent = `Editing: ${escapeHTML(note.name)}`; noteEditorTextarea.value = note.content; saveNoteContentBtn.dataset.date = dateString; saveNoteContentBtn.dataset.index = noteIndex; showModal(editorModal); noteEditorTextarea.focus(); }
-        saveNoteContentBtn.addEventListener('click', () => { const dateString = saveNoteContentBtn.dataset.date; const noteIndex = parseInt(saveNoteContentBtn.dataset.index); const newContent = noteEditorTextarea.value; if (dateString && !isNaN(noteIndex) && notesData[dateString]?.[noteIndex]) { notesData[dateString][noteIndex].content = newContent; saveNotes(); showNotification("Note saved!"); } else { showNotification("Error saving note.", 3000, 'error'); } });
-        copyEditorContentBtn.addEventListener('click', () => { const textToCopy = noteEditorTextarea.value; if (!textToCopy.trim()) { showNotification("Nothing to copy.", 2000); return; } navigator.clipboard.writeText(textToCopy).then(() => { showNotification("Content copied!"); }).catch(err => { console.error('Clipboard copy failed:', err); showNotification("Failed to copy.", 3000, 'error'); }); });
-        closeEditorBtn.addEventListener('click', () => { hideModal(editorModal); noteEditorTextarea.value = ''; saveNoteContentBtn.dataset.date = ''; saveNoteContentBtn.dataset.index = ''; });
+
         batchCountHighestBtn.addEventListener('click', () => { window.open('Tools/Batchcountcalculator/batchcount_calculator-highestround.html', '_blank', 'noopener,noreferrer'); hideModal(batchCountModal); });
         batchCountNearestBtn.addEventListener('click', () => { window.open('Tools/Batchcountcalculator/batchcount_calculator-nearestround.html', '_blank', 'noopener,noreferrer'); hideModal(batchCountModal); });
         cancelBatchCountBtn.addEventListener('click', () => hideModal(batchCountModal));
         
         settingsButton.addEventListener('click', () => { 
-            // Load appearance settings which now includes visualizer, then update all UI
-            loadAppearanceSettingsFromStorage(); // This will call updateAppearanceSettingsUI
+            loadAppearanceSettingsFromStorage();
             loadKeybindsFromStorage(); 
             showModal(settingsModal); 
         });
         closeSettingsBtn.addEventListener('click', () => hideModal(settingsModal));
         
         applyAppearanceBtn.addEventListener('click', () => { 
+            currentAppearanceSettings.darkMode = darkModeToggle.checked;
             currentAppearanceSettings.headerGradientStart = headerGradientStartInput.value; 
             currentAppearanceSettings.headerGradientEnd = headerGradientEndInput.value; 
             currentAppearanceSettings.headerGradientAngle = parseInt(headerGradientAngleInput.value, 10) || DEFAULT_APPEARANCE.headerGradientAngle; 
@@ -902,31 +771,27 @@
             currentAppearanceSettings.uiElementOpacity = parseFloat(uiElementOpacityInput.value); 
             currentAppearanceSettings.uiElementBackdropBlur = parseInt(uiElementBackdropBlurInput.value, 10); 
             
-            // Collect visualizer settings from UI into currentAppearanceSettings.backgroundVisualizer
             collectBackgroundVisualizerSettingsFromUI();
-            // Apply all settings (header, translucency, and visualizer)
             applyAppearanceSettings(currentAppearanceSettings, "manual"); 
             saveAppearanceSettingsToStorage(currentAppearanceSettings); 
             showNotification("All appearance settings applied!"); 
         });
         resetAppearanceBtn.addEventListener('click', () => { 
-            currentAppearanceSettings = JSON.parse(JSON.stringify(DEFAULT_APPEARANCE)); // Deep copy defaults
+            currentAppearanceSettings = JSON.parse(JSON.stringify(DEFAULT_APPEARANCE));
             applyAppearanceSettings(currentAppearanceSettings, "reset"); 
             saveAppearanceSettingsToStorage(currentAppearanceSettings); 
-            updateAppearanceSettingsUI(currentAppearanceSettings); // Ensure UI reflects reset state
+            updateAppearanceSettingsUI(currentAppearanceSettings);
             showNotification("All appearance settings reset to default."); 
         });
 
-        // Event listeners for individual visualizer controls to update UI and live preview
+        // Event listeners for individual visualizer controls
         Object.values(visControls).forEach(control => {
             if (control instanceof HTMLElement && (control.tagName === 'INPUT' || control.tagName === 'SELECT') && 
-                control.id !== 'resetParticleSettingsBtn' && control.id !== 'resetBoxSettingsBtn') { // Exclude buttons
+                control.id !== 'resetParticleSettingsBtn' && control.id !== 'resetBoxSettingsBtn') {
                 const eventType = (['range', 'color'].includes(control.type)) ? 'input' : 'change';
                 control.addEventListener(eventType, () => {
-                    collectBackgroundVisualizerSettingsFromUI(); // Update current settings from this control
-                    applyAppearanceSettings(currentAppearanceSettings, "manual"); // Re-apply visualizer part
-                    // No save to storage here, only on "Apply All Appearance"
-                    // But update the UI value displays if they exist
+                    collectBackgroundVisualizerSettingsFromUI();
+                    applyAppearanceSettings(currentAppearanceSettings, "manual");
                     updateBackgroundVisualizerUIFromSettings(); 
                 });
             }
@@ -942,14 +807,13 @@
         });
         visControls.resetBoxSettingsBtn.addEventListener('click', () => {
             const boxKeys = Object.keys(defaultBackgroundVisualizerSettings).filter(k => k.toLowerCase().includes('box'));
-             boxKeys.forEach(key => {
+                boxKeys.forEach(key => {
                 currentAppearanceSettings.backgroundVisualizer[key] = defaultBackgroundVisualizerSettings[key];
             });
             applyAppearanceSettings(currentAppearanceSettings, "reset");
             updateBackgroundVisualizerUIFromSettings();
             showNotification("Floating box visualizer settings reset to default.");
         });
-
 
         [uiElementOpacityInput, uiElementBackdropBlurInput].forEach(slider => { 
             if (slider) { 
@@ -964,42 +828,28 @@
                 } 
             } 
         });
-        // Range slider value displays for visualizer (already handled by updateBackgroundVisualizerUIFromSettings on input/change)
-
+        
         saveKeybindsBtn.addEventListener('click', () => { 
             currentKeybinds.paramExtractor = keybindParamExtractorInput.value.trim(); 
             currentKeybinds.batchCalculator = keybindBatchCalculatorInput.value.trim(); 
-            if (keybindCsvToJsonInput) currentKeybinds.csvToJson = keybindCsvToJsonInput.value.trim(); // Save new keybind
+            if (keybindCsvToJsonInput) currentKeybinds.csvToJson = keybindCsvToJsonInput.value.trim();
             currentKeybinds.tool4 = keybindTool4Input.value.trim(); 
             currentKeybinds.tool5 = keybindTool5Input.value.trim(); 
             currentKeybinds.openSettings = keybindOpenSettingsInput.value.trim(); 
-            currentKeybinds.prevMonth = keybindPrevMonthInput.value.trim(); 
-            currentKeybinds.nextMonth = keybindNextMonthInput.value.trim(); 
-            currentKeybinds.gotoToday = keybindGotoTodayInput.value.trim(); 
-            currentKeybinds.newNote = keybindNewNoteInput.value.trim(); 
-            currentKeybinds.deleteAllNotes = keybindDeleteAllNotesInput.value.trim(); 
-            currentKeybinds.saveNote = keybindSaveNoteInput.value.trim(); 
             saveKeybindsToStorage(currentKeybinds); 
             showNotification("Keybinds saved!"); 
         });
         resetKeybindsBtn.addEventListener('click', () => { currentKeybinds = { ...DEFAULT_KEYBINDS }; saveKeybindsToStorage(currentKeybinds); loadKeybindsFromStorage(); showNotification("Keybinds reset to default."); });
-        function exportNotesData() { if (Object.keys(notesData).length === 0) { showNotification("No notes data to export.", 3000, 'info'); return; } try { const jsonData = JSON.stringify(notesData, null, 2); const blob = new Blob([jsonData], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-'); a.download = `ado-insights-notes-backup-${timestamp}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); showNotification("All notes data exported successfully!", 3000); } catch (error) { console.error("Error exporting notes data:", error); showNotification("Failed to export notes data. See console for details.", 4000, 'error'); } }
-        if (exportNotesBtn) exportNotesBtn.addEventListener('click', exportNotesData);
-        function processImportFile(file) { if (!file) { showNotification("No file selected for import.", 3000, 'error'); return; } if (file.type !== 'application/json') { showNotification("Invalid file type. Please select a JSON file (.json).", 4000, 'error'); return; } const reader = new FileReader(); reader.onload = (event) => { try { const importedRawData = event.target.result; const importedParsedData = JSON.parse(importedRawData); if (typeof importedParsedData !== 'object' || importedParsedData === null) { throw new Error("Imported data is not a valid JSON object."); } for (const dateKey in importedParsedData) { if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) { throw new Error(`Invalid date key format in imported data: ${dateKey}`); } if (!Array.isArray(importedParsedData[dateKey])) { throw new Error(`Data for date ${dateKey} is not an array.`); } importedParsedData[dateKey].forEach(note => { if (typeof note !== 'object' || note === null || typeof note.name !== 'string' || typeof note.content !== 'string') { throw new Error(`Invalid note structure for date ${dateKey}. Each note must have 'name' and 'content' strings.`); } }); } if (!confirm("Importing will overwrite all current notes. Are you sure you want to proceed?")) { showNotification("Import cancelled by user.", 3000, 'info'); return; } notesData = importedParsedData; saveNotes(); renderCalendar(currentMonth, currentYear); if (selectedDate && notesData[selectedDate]) { displayNotesForSelectedDay(); } else if (selectedDate) { selectedDate = null; notesHeading.textContent = `Notepad`; displayNotesForSelectedDay(); } else { notesHeading.textContent = `Notepad`; displayNotesForSelectedDay(); } showNotification("Notes data imported successfully! The page will now refresh to apply all changes.", 4000); setTimeout(() => window.location.reload(), 4100); } catch (error) { console.error("Error processing imported file:", error); showNotification(`Import failed: ${error.message}`, 5000, 'error'); } finally { importNotesFileInput.value = ''; } }; reader.onerror = () => { showNotification("Error reading the import file.", 4000, 'error'); importNotesFileInput.value = ''; }; reader.readAsText(file); }
-        if (importDropZone) { importDropZone.addEventListener('click', () => importNotesFileInput.click()); importDropZone.addEventListener('dragover', (event) => { event.preventDefault(); importDropZone.classList.add('dragover'); }); importDropZone.addEventListener('dragleave', () => { importDropZone.classList.remove('dragover'); }); importDropZone.addEventListener('drop', (event) => { event.preventDefault(); importDropZone.classList.remove('dragover'); if (event.dataTransfer.files && event.dataTransfer.files[0]) { processImportFile(event.dataTransfer.files[0]); } }); importDropZone.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); importNotesFileInput.click(); } }); }
-        if (importNotesFileInput) { importNotesFileInput.addEventListener('change', (event) => { if (event.target.files && event.target.files[0]) { processImportFile(event.target.files[0]); } }); }
-        [nameNoteModal, editorModal, batchCountModal, settingsModal].forEach(modal => { if (modal) { modal.addEventListener('click', (event) => { if (event.target === modal) hideModal(modal); });}});
-        document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { if (nameNoteModal && nameNoteModal.classList.contains('visible')) hideModal(nameNoteModal); else if (editorModal && editorModal.classList.contains('visible')) hideModal(editorModal); else if (batchCountModal && batchCountModal.classList.contains('visible')) hideModal(batchCountModal); else if (settingsModal && settingsModal.classList.contains('visible')) hideModal(settingsModal); }});
+        
+        [batchCountModal, settingsModal].forEach(modal => { if (modal) { modal.addEventListener('click', (event) => { if (event.target === modal) hideModal(modal); });}});
+        document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { if (batchCountModal && batchCountModal.classList.contains('visible')) hideModal(batchCountModal); else if (settingsModal && settingsModal.classList.contains('visible')) hideModal(settingsModal); }});
         document.addEventListener('keydown', (event) => { 
             const activeElement = document.activeElement; 
             const isTyping = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA' || activeElement.isContentEditable); 
-            if (isTyping) { 
-                if (settingsModal && settingsModal.classList.contains('visible') && activeElement.closest('#settings-modal')) { 
-                    if (event.key === "Escape") {} else { return; } 
-                } else if (!settingsModal || !settingsModal.classList.contains('visible')) { 
-                    return; 
-                } 
-            } 
+            if (isTyping && activeElement.closest('#settings-modal')) {
+                return; // Don't trigger global keybinds when typing in settings
+            }
+            
             let keyString = ""; 
             if (event.ctrlKey) keyString += "Control+"; 
             if (event.altKey) keyString += "Alt+"; 
@@ -1010,36 +860,24 @@
             
             if (currentKeybinds.paramExtractor && keyString === currentKeybinds.paramExtractor.toUpperCase()) { event.preventDefault(); clickToolCard('parameter-extractor'); } 
             else if (currentKeybinds.batchCalculator && keyString === currentKeybinds.batchCalculator.toUpperCase()) { event.preventDefault(); clickToolCard('batch-count-calculator'); } 
-            else if (currentKeybinds.csvToJson && keyString === currentKeybinds.csvToJson.toUpperCase()) { event.preventDefault(); clickToolCard('csv-to-json-processor'); } // Handle new tool
+            else if (currentKeybinds.csvToJson && keyString === currentKeybinds.csvToJson.toUpperCase()) { event.preventDefault(); clickToolCard('csv-to-json-processor'); }
             else if (currentKeybinds.tool4 && keyString === currentKeybinds.tool4.toUpperCase()) { event.preventDefault(); clickToolCard('tool-4'); } 
             else if (currentKeybinds.tool5 && keyString === currentKeybinds.tool5.toUpperCase()) { event.preventDefault(); clickToolCard('tool-5'); } 
             else if (currentKeybinds.openSettings && keyString === currentKeybinds.openSettings.toUpperCase()) { event.preventDefault(); if (settingsModal && settingsModal.classList.contains('visible')) hideModal(settingsModal); else if (settingsButton) settingsButton.click(); } 
-            else if (currentKeybinds.prevMonth && keyString === currentKeybinds.prevMonth) { if (!isTyping || (settingsModal && settingsModal.classList.contains('visible'))) { event.preventDefault(); if(prevMonthBtn) prevMonthBtn.click(); }}  
-            else if (currentKeybinds.nextMonth && keyString === currentKeybinds.nextMonth) { if (!isTyping || (settingsModal && settingsModal.classList.contains('visible'))) { event.preventDefault(); if(nextMonthBtn) nextMonthBtn.click(); }}  
-            else if (currentKeybinds.gotoToday && keyString === currentKeybinds.gotoToday.toUpperCase()) { if (!isTyping || (settingsModal && settingsModal.classList.contains('visible'))) { event.preventDefault(); const todayElem = calendarDaysGrid.querySelector('.calendar-day.today'); if (todayElem) todayElem.click(); else { currentMonth = new Date().getMonth(); currentYear = new Date().getFullYear(); renderCalendar(currentMonth, currentYear); setTimeout(() => { const todayElemAfterRender = calendarDaysGrid.querySelector('.calendar-day.today'); if(todayElemAfterRender) todayElemAfterRender.click(); }, 0); } } } 
-            else if (currentKeybinds.newNote && keyString === currentKeybinds.newNote.toUpperCase()) { const noModalOpen = (!nameNoteModal || !nameNoteModal.classList.contains('visible')) && (!editorModal || !editorModal.classList.contains('visible')) && (!settingsModal || !settingsModal.classList.contains('visible')) && (!batchCountModal || !batchCountModal.classList.contains('visible')); if (selectedDate && noModalOpen && createNoteBtn) { event.preventDefault(); createNoteBtn.click(); }}  
-            else if (currentKeybinds.deleteAllNotes && keyString === currentKeybinds.deleteAllNotes.toUpperCase()) { const noModalOpen = (!nameNoteModal || !nameNoteModal.classList.contains('visible')) && (!editorModal || !editorModal.classList.contains('visible')) && (!settingsModal || !settingsModal.classList.contains('visible')) && (!batchCountModal || !batchCountModal.classList.contains('visible')); if (selectedDate && notesData[selectedDate] && notesData[selectedDate].length > 0 && noModalOpen && deleteAllNotesBtn) { event.preventDefault(); deleteAllNotesBtn.click(); }} 
-            else if (currentKeybinds.saveNote && keyString === currentKeybinds.saveNote.toUpperCase()) { if (editorModal && editorModal.classList.contains('visible') && saveNoteContentBtn) { event.preventDefault(); saveNoteContentBtn.click(); }} 
         });
         function showNotification(message, duration = 3000, type = 'info') { const container = document.getElementById('notification-container'); if (!container) { console.warn("Notification container not found."); return; } const notification = document.createElement('div'); notification.className = 'notification'; if (type === 'error') notification.classList.add('error'); notification.textContent = message; container.appendChild(notification); setTimeout(() => { notification.classList.add('fade-out'); notification.addEventListener('animationend', () => notification.remove(), { once: true }); }, duration - NOTIFICATION_FADE_DURATION); }
         
         window.addEventListener('mousemove', e => { mouseForParticles.x = e.clientX; mouseForParticles.y = e.clientY; });
         window.addEventListener('mouseout', () => { mouseForParticles.x = undefined; mouseForParticles.y = undefined; });
         window.addEventListener('resize', () => {
-            applyAppearanceSettings(currentAppearanceSettings, "resize"); // This will re-init visualizer
+            applyAppearanceSettings(currentAppearanceSettings, "resize");
         });
         
         document.addEventListener('DOMContentLoaded', () => { 
-            loadAppearanceSettingsFromStorage(); // This now loads, applies, and updates UI for all appearance including visualizer
-            loadNotes(); 
+            loadAppearanceSettingsFromStorage();
             loadKeybindsFromStorage(); 
             populateMenus(); 
-            renderCalendar(currentMonth, currentYear); 
-            displayNotesForSelectedDay(); 
-            // Visualizer is started by loadAppearanceSettingsFromStorage calling applyAppearanceSettings with "init"
         });
-        if (prevMonthBtn) { prevMonthBtn.addEventListener('click', () => { currentMonth--; if (currentMonth < 0) { currentMonth = 11; currentYear--; } selectedDate = null; notesHeading.textContent = `Notepad`; createNoteBtn.style.display = 'none'; deleteAllNotesBtn.style.display = 'none'; saveAllNotesBtn.style.display = 'none'; displayNotesForSelectedDay(); renderCalendar(currentMonth, currentYear); });}
-        if (nextMonthBtn) { nextMonthBtn.addEventListener('click', () => { currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear++; } selectedDate = null; notesHeading.textContent = `Notepad`; createNoteBtn.style.display = 'none'; deleteAllNotesBtn.style.display = 'none'; saveAllNotesBtn.style.display = 'none'; displayNotesForSelectedDay(); renderCalendar(currentMonth, currentYear); });}
 
         // Initialize min/max for visualizer sliders
         visControls.particleCountSlider.min=10; visControls.particleCountSlider.max=500;
