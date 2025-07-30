@@ -760,6 +760,14 @@
         });
         closeSettingsBtn.addEventListener('click', () => hideModal(settingsModal));
         
+        // Event listener for the dark mode toggle for instant changes
+        darkModeToggle.addEventListener('change', () => {
+            currentAppearanceSettings.darkMode = darkModeToggle.checked;
+            applyAppearanceSettings(currentAppearanceSettings, "init"); // Apply change immediately
+            saveAppearanceSettingsToStorage(currentAppearanceSettings); // Save the new state
+            showNotification(`Dark Mode ${currentAppearanceSettings.darkMode ? 'Enabled' : 'Disabled'}`);
+        });
+
         applyAppearanceBtn.addEventListener('click', () => { 
             currentAppearanceSettings.darkMode = darkModeToggle.checked;
             currentAppearanceSettings.headerGradientStart = headerGradientStartInput.value; 
