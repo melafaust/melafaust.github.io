@@ -250,9 +250,11 @@
             </div>
             
             <div class="code-block-container">
-                <pre><code id="code-block">// ==UserScript==
+                <pre><code id="code-block">
+
+// ==UserScript==
 // @name         Automatic Parameter Collector & Cleanser for ADO Insights
-// @description  Automatically cleanses scraped data, ready for rerun.
+// @description  Automatically cleanses scraped data. Ready for rerun.
 // @author       Mela Faustino
 // ==/UserScript==
 
@@ -291,39 +293,550 @@
     let isScraping = false;
     const saveCounters = {};
 
-    // This script creates its own UI, which will appear on the page where it's run.
-    // The following code will not be visible on this viewer page, but will execute on the target site.
-    if (typeof(document) !== 'undefined') {
-        const mainButton = document.createElement('button');
-        mainButton.id = 'scraper-main-button';
-        mainButton.textContent = BUTTON_TEXT;
-        const mainButtonInitialShadow = '0 2px 5px rgba(0,0,0,0.2)';
-        applyStyles(mainButton, { position: 'fixed', bottom: '20px', right: '20px', padding: '12px 20px', background: THEME.primaryGradient, color: THEME.lightText, border: 'none', borderRadius: '8px', cursor: 'pointer', zIndex: '99998', boxShadow: mainButtonInitialShadow, fontFamily: 'Arial, sans-serif', fontSize: '16px', fontWeight: 'bold', transition: 'transform 0.2s ease, box-shadow 0.2s ease' });
-        mainButton.addEventListener('click', toggleMenu);
-        mainButton.onmouseover = () => { mainButton.style.transform = 'scale(1.05)'; mainButton.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)'; };
-        mainButton.onmouseout = () => { mainButton.style.transform = 'scale(1)'; mainButton.style.boxShadow = mainButtonInitialShadow; };
-        document.body.appendChild(mainButton);
-        
-        const menu = document.createElement('div');
-        menu.id = 'scraper-menu';
-        applyStyles(menu, { position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '450px', backgroundColor: THEME.menuBg, border: `2px solid ${THEME.borderColor}`, borderRadius: '12px', boxShadow: '0 5px 20px rgba(0,0,0,0.4)', zIndex: '99999', display: 'none', fontFamily: 'Arial, sans-serif', fontSize: '14px', color: THEME.darkText, overflow: 'hidden' });
-        
-        const menuHeader = document.createElement('div');
-        menuHeader.id = 'scraper-menu-header';
-        menuHeader.textContent = MENU_TITLE;
-        applyStyles(menuHeader, { padding: '12px 20px', background: THEME.primaryGradient, color: THEME.lightText, cursor: 'move', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textShadow: '1px 1px 2px rgba(0,0,0,0.3)' });
-        const closeButton = document.createElement('button');
-        closeButton.innerHTML = '&times;';
-        applyStyles(closeButton, { background: 'none', border: 'none', fontSize: '24px', fontWeight: 'bold', cursor: 'pointer', color: THEME.lightText, padding: '0 5px', transition: 'transform 0.3s ease' });
-        closeButton.onmouseover = () => closeButton.style.transform = 'rotate(90deg)';
-        closeButton.onmouseout = () => closeButton.style.transform = 'rotate(0deg)';
-        closeButton.addEventListener('click', toggleMenu);
-        menuHeader.appendChild(closeButton);
-        menu.appendChild(menuHeader);
+    // --- Create Main Button ---
+    const mainButton = document.createElement('button');
+    mainButton.id = 'scraper-main-button';
+    mainButton.textContent = BUTTON_TEXT;
+    const mainButtonInitialShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    applyStyles(mainButton, { position: 'fixed', bottom: '20px', right: '20px', padding: '12px 20px', background: THEME.primaryGradient, color: THEME.lightText, border: 'none', borderRadius: '8px', cursor: 'pointer', zIndex: '99998', boxShadow: mainButtonInitialShadow, fontFamily: 'Arial, sans-serif', fontSize: '16px', fontWeight: 'bold', transition: 'transform 0.2s ease, box-shadow 0.2s ease' });
+    mainButton.addEventListener('click', toggleMenu);
+    mainButton.onmouseover = () => { mainButton.style.transform = 'scale(1.05)'; mainButton.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)'; };
+    mainButton.onmouseout = () => { mainButton.style.transform = 'scale(1)'; mainButton.style.boxShadow = mainButtonInitialShadow; };
+    document.body.appendChild(mainButton);
+    // --- Create UI Menu ---
+    const menu = document.createElement('div');
+    menu.id = 'scraper-menu';
+    applyStyles(menu, { position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '450px', backgroundColor: THEME.menuBg, border: `2px solid ${THEME.borderColor}`, borderRadius: '12px', boxShadow: '0 5px 20px rgba(0,0,0,0.4)', zIndex: '99999', display: 'none', fontFamily: 'Arial, sans-serif', fontSize: '14px', color: THEME.darkText, overflow: 'hidden' });
+    // --- Menu Header ---
+    const menuHeader = document.createElement('div');
+    menuHeader.id = 'scraper-menu-header';
+    menuHeader.textContent = MENU_TITLE;
+    applyStyles(menuHeader, { padding: '12px 20px', background: THEME.primaryGradient, color: THEME.lightText, cursor: 'move', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textShadow: '1px 1px 2px rgba(0,0,0,0.3)' });
+    const closeButton = document.createElement('button');
+    closeButton.innerHTML = '&times;';
+    applyStyles(closeButton, { background: 'none', border: 'none', fontSize: '24px', fontWeight: 'bold', cursor: 'pointer', color: THEME.lightText, padding: '0 5px', transition: 'transform 0.3s ease' });
+    closeButton.onmouseover = () => closeButton.style.transform = 'rotate(90deg)';
+    closeButton.onmouseout = () => closeButton.style.transform = 'rotate(0deg)';
+    closeButton.addEventListener('click', toggleMenu);
+    menuHeader.appendChild(closeButton);
+    menu.appendChild(menuHeader);
+    // --- Menu Content Area ---
+    const menuContent = document.createElement('div');
+    applyStyles(menuContent, { padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' });
+
+    const activityLabel = createLabel('Activity Name to Process:');
+    const activityInput = createInput('text', 'scraper-activity-name', 'e.g., Send Areas');
+    menuContent.appendChild(activityLabel);
+    menuContent.appendChild(activityInput);
+
+    const logOutputLabel = createLabel('Processing Log:');
+    const logOutputTextarea = createTextarea('scraper-log-output', 4, true);
+    menuContent.appendChild(logOutputLabel);
+    menuContent.appendChild(logOutputTextarea);
+
+    const { progressBarContainer, progressBarFill, progressBarText } = createProgressBar();
+    menuContent.appendChild(progressBarContainer);
+    const completionStatus = createCompletionStatus();
+    menuContent.appendChild(completionStatus);
+
+    const dataOutputLabel = createLabel('Formatted & Deduplicated Data:', '10px');
+    const formattedOutput = createTextarea('cleanser-formatted-output', 5, true);
+    applyStyles(formattedOutput, { minHeight: '80px', whiteSpace: 'pre', overflowWrap: 'normal', overflowX: 'scroll' });
+    menuContent.appendChild(dataOutputLabel);
+    menuContent.appendChild(formattedOutput);
+    // --- Action Buttons ---
+    const actionButtonsContainer = document.createElement('div');
+    applyStyles(actionButtonsContainer, { display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' });
+
+    const azureButton = createButton('Process & Cleanse', THEME.actionButtonBg, handleProcessAzure);
+    actionButtonsContainer.appendChild(azureButton);
+    const simpleActionsContainer = document.createElement('div');
+    applyStyles(simpleActionsContainer, { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' });
+    const saveButton = createButton('Save Data', THEME.primaryGradient, handleSave);
+    applyStyles(saveButton, { padding: '10px' });
+    buttonHoverEffect(saveButton);
+    simpleActionsContainer.appendChild(saveButton);
+    const copyButton = createButton('Copy Data', THEME.primaryGradient, handleCopy);
+    applyStyles(copyButton, { padding: '10px' });
+    buttonHoverEffect(copyButton);
+    simpleActionsContainer.appendChild(copyButton);
+
+    actionButtonsContainer.appendChild(simpleActionsContainer);
+
+    const resetButtonContainer = document.createElement('div');
+    applyStyles(resetButtonContainer, { display: 'flex', marginTop: '10px' });
+    const resetButton = createButton('Reset', THEME.resetButtonBg, handleReset);
+    applyStyles(resetButton, { flex: 1, padding: '10px' });
+    buttonHoverEffect(resetButton, 'rgba(108, 117, 125, 0.4)');
+    resetButtonContainer.appendChild(resetButton);
+    actionButtonsContainer.appendChild(resetButtonContainer);
+
+
+    menuContent.appendChild(actionButtonsContainer);
+    menu.appendChild(menuContent);
+    document.body.appendChild(menu);
+
+    const statusMessage = createStatusMessage();
+    document.body.appendChild(statusMessage);
+    // --- Event Handlers & Main Logic ---
+    function toggleMenu() {
+        if (isScraping) return;
+        menuVisible = !menuVisible;
+        menu.style.display = menuVisible ? 'block' : 'none';
+        mainButton.textContent = menuVisible ? "🔽 Auto Collector" : "🛠️ Auto Collector";
     }
-    // The rest of the script continues here...
-    // Note: The full script logic is included but abbreviated for display purposes.
-    // The copy button will copy the entire, unmodified script.
+
+    async function handleProcessAzure() {
+        if (isScraping) {
+            showStatusMessage("Scraping is already in progress.", "error");
+            return;
+        }
+        const targetActivityName = activityInput.value.trim();
+        if (!targetActivityName) {
+            showStatusMessage("Please enter an Activity Name to process.", "error");
+            log("Please enter the target Activity Name in the input box above.");
+            return;
+        }
+
+        setScrapingState(true, targetActivityName);
+        const allInputs = [];
+        let processStatus = 'running';
+        let cleanseStats = null;
+
+        try {
+            await pollForElement('tr.p-selectable-row', true, 7000);
+            let currentPageNumber = 1;
+            while (true) {
+                log(`\n--- Processing Page ${currentPageNumber} ---`);
+                updateProgressBar(0, 1);
+                const firstRowOnPage = document.querySelector('tr.p-selectable-row');
+                const pageInputs = await scrapeCurrentPage(targetActivityName);
+                allInputs.push(...pageInputs);
+
+                const activePageElement = document.querySelector('button.p-paginator-page.p-highlight');
+                if (!activePageElement) {
+                    log(`Could not find pagination. Assuming single page process is complete.`);
+                    break;
+                }
+                const nextPageButton = activePageElement.nextElementSibling;
+                if (nextPageButton && nextPageButton.matches('button.p-paginator-page')) {
+                    const nextPageNumber = parseInt(nextPageButton.innerText.trim(), 10);
+                    log(`Navigating to page ${nextPageNumber}...`, false);
+                    nextPageButton.click();
+                    await waitForPageNumberChange(nextPageNumber, 5000);
+                    await pollForElementToDisappear(firstRowOnPage, 5000);
+                    await pollForElement('tr.p-selectable-row', true, 7000);
+                    currentPageNumber = nextPageNumber;
+                } else {
+                    log(`\nNo more pages found. This was the last page.`);
+                    break;
+                }
+            }
+            if (allInputs.length > 0) {
+                log(`\nScraping finished. Now automatically cleansing data...`);
+                const rawJson = JSON.stringify(allInputs, null, 2);
+                cleanseStats = autoCleanse(rawJson);
+                log(`Cleansing complete. Found ${cleanseStats.uniqueCount} unique Params (${cleanseStats.duplicatesFound} duplicates removed).`);
+                processStatus = 'success';
+            } else {
+                processStatus = 'no_data';
+                log(`\nFinished, but no data was scraped.`);
+            }
+        } catch (error) {
+            processStatus = 'error';
+            console.error("Scraping process failed:", error);
+            showStatusMessage(`An error occurred: ${error.message}`, "error");
+            log(`\nERROR: The process failed. Check the console for details.`);
+        } finally {
+            setScrapingState(false, targetActivityName, processStatus, cleanseStats);
+        }
+    }
+
+    async function scrapeCurrentPage(targetActivityName) {
+        const pageInputs = [];
+        const allVisibleRows = document.querySelectorAll('tr.p-selectable-row');
+        if (allVisibleRows.length === 0) return [];
+        const targetRows = Array.from(allVisibleRows).filter(row => {
+            const nameElement = row.querySelector('div.name-field > span');
+            return nameElement && nameElement.textContent.trim() === targetActivityName;
+        });
+        if (targetRows.length === 0) {
+            log(`No runs named "${targetActivityName}" found on this page.`);
+            return [];
+        }
+
+        log(`Found ${targetRows.length} matching runs on this page.`);
+        for (let i = 0; i < targetRows.length; i++) {
+            const row = targetRows[i];
+            log(`-> Processing row ${i + 1} of ${targetRows.length}...`, false);
+            row.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+            await delay(100);
+            const inputButton = row.querySelector('button[aria-label="Input"]');
+            if (!inputButton) {
+                log(`\n  - ERROR: Could not find input button. Skipping.`);
+                updateProgressBar(i + 1, targetRows.length);
+                continue;
+            }
+
+            inputButton.click();
+            try {
+                const jsonElement = await pollForElement('div.json[role="text"]', true, 5000);
+                const jsonText = jsonElement.ariaLabel;
+                try {
+                    pageInputs.push(JSON.parse(jsonText));
+                    log(` Success!`);
+                } catch (e) {
+                    pageInputs.push({ error: "Invalid JSON", content: jsonText });
+                    log(` WARNING: Content was not valid JSON.`);
+                }
+                const closeButton = document.querySelector('div[role="button"][aria-label="Close"]');
+                if (closeButton) {
+                    closeButton.click();
+                    await delay(50);
+                }
+            } catch (error) {
+                log(`\n  - ERROR: Timed out waiting for modal.`);
+                const lingeringCloseButton = document.querySelector('div[role="button"][aria-label="Close"]');
+                if (lingeringCloseButton) lingeringCloseButton.click();
+            }
+            row.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+            updateProgressBar(i + 1, targetRows.length);
+        }
+        return pageInputs;
+    }
+
+    // --- Auto-Cleansing Logic ---
+    function autoCleanse(rawJson) {
+        let parsedJSON;
+        try {
+            parsedJSON = JSON.parse(rawJson);
+        } catch (e) {
+            log(`ERROR: Could not parse scraped JSON for cleansing.`);
+            return null;
+        }
+
+        let unformattedString = '';
+        for (const topLevelObject of parsedJSON) {
+            if (typeof topLevelObject !== 'object' || topLevelObject === null) continue;
+            const functionName = topLevelObject.functionName || 'default';
+            const params = topLevelObject.body?.urlparams;
+            if (Array.isArray(params) && params.length > 0) {
+                unformattedString += JSON.stringify(params, null, 2);
+                unformattedString += TOOL_BLOCK_SEPARATORS[functionName] || TOOL_BLOCK_SEPARATORS.default;
+            }
+        }
+        
+        const SEPARATOR_REGEX = new RegExp(Object.values(TOOL_BLOCK_SEPARATORS).map(s => s.trim()).join('|'));
+        const blocks = unformattedString.trim().split(SEPARATOR_REGEX).filter(block => block.trim());
+        let allObjects = [];
+        for (const block of blocks) {
+            try {
+                const parsedBlock = JSON.parse(block);
+                if (Array.isArray(parsedBlock)) allObjects.push(...parsedBlock);
+            } catch (e) { /* Ignore parsing errors */ }
+        }
+
+        const seenSignatures = new Set();
+        const uniqueObjects = [];
+        for (const obj of allObjects) {
+            const signature = JSON.stringify(obj);
+            if (!seenSignatures.has(signature)) {
+                seenSignatures.add(signature);
+                uniqueObjects.push(obj);
+            }
+        }
+
+        formattedOutput.value = uniqueObjects.map(obj => JSON.stringify(obj, null, 2)).join(',\n');
+        return {
+            totalCount: allObjects.length,
+            uniqueCount: uniqueObjects.length,
+            duplicatesFound: allObjects.length - uniqueObjects.length
+        };
+    }
+
+    // --- Button Handlers ---
+    function handleSave() {
+        const textToSave = formattedOutput.value;
+        if (!textToSave) {
+            showStatusMessage("No data to save.", "error");
+            return;
+        }
+
+        // MODIFIED: Always save as a .txt file.
+        const extension = 'txt';
+
+        // Get the base name from the input field.
+        let baseName = activityInput.value.trim().replace(/[^a-z0-9]/gi, '_') || "scraped_data";
+        
+        // MODIFIED: Adjust the base name to better match the example (e.g., "Send_WorkItems" becomes "WorkItems").
+        let formattedBaseName = baseName.replace(/^Send_/, '');
+
+        // Handle the counter for unique filenames.
+        saveCounters[baseName] = (saveCounters[baseName] || 0) + 1;
+        const counter = saveCounters[baseName];
+
+        // MODIFIED: Format the date to "Month Day, Year".
+        const formattedDate = new Date().toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        });
+        
+        // MODIFIED: Assemble the new suggested filename.
+        const suggestedFilename = `${formattedBaseName}_${counter} (${formattedDate}).${extension}`;
+        
+        // Prompt the user to enter or confirm the filename.
+        const filename = prompt("Please enter a filename:", suggestedFilename);
+
+        if (!filename) {
+            // If the user cancels the prompt, stop the save.
+            saveCounters[baseName]--;
+            showStatusMessage("Save cancelled.", "info");
+            return;
+        }
+
+        const blob = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+        showStatusMessage(`Saved as ${filename}`, "success");
+    }
+
+    function handleCopy() {
+        const textToCopy = formattedOutput.value;
+        if (!textToCopy) {
+            showStatusMessage("No data to copy.", "error");
+            return;
+        }
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            showStatusMessage('Copied to clipboard!', 'success');
+        }).catch(err => {
+            showStatusMessage('Error copying to clipboard.', "error");
+            console.error('Clipboard copy error:', err);
+        });
+    }
+
+    function handleReset() {
+        if (isScraping) {
+            showStatusMessage("Cannot reset while a process is running.", "error");
+            return;
+        }
+        activityInput.value = '';
+        logOutputTextarea.value = '';
+        formattedOutput.value = '';
+        updateProgressBar(0, 1);
+        completionStatus.style.display = 'none';
+        showStatusMessage("Fields and data have been cleared.", "info");
+    }
+
+    // --- UI & State Utilities ---
+    function setScrapingState(isStarting, activityName, finalStatus = '', cleanseStats = null) {
+        isScraping = isStarting;
+        azureButton.disabled = isStarting;
+        azureButton.textContent = isStarting ? 'Processing...' : 'Process & Cleanse';
+        progressBarContainer.style.display = isStarting ? 'block' : 'none';
+        completionStatus.style.display = 'none';
+
+        if (isStarting) {
+            logOutputTextarea.value = "";
+            formattedOutput.value = "";
+            log(`Starting process for Activity Name: "${activityName}"`);
+            updateProgressBar(0, 1);
+        } else {
+            let statusText = '';
+            let statusColor = '';
+            switch (finalStatus) {
+                case 'success':
+                    statusText = `✅ Processing Complete!
+Ready for Rerun.`;
+                    if (cleanseStats) {
+                        statusText += `<br><small>Found ${cleanseStats.uniqueCount} unique Params (${cleanseStats.duplicatesFound} duplicates removed).</small>`;
+                    }
+                    statusColor = '#28a745';
+                    break;
+                case 'no_data':
+                    statusText = '⚠️ No matching data found.';
+                    statusColor = '#ffc107';
+                    break;
+                case 'error':
+                    statusText = '❌ An error occurred.';
+                    statusColor = '#dc3545';
+                    break;
+            }
+            if (statusText) {
+                completionStatus.innerHTML = statusText;
+                completionStatus.style.color = statusColor;
+                completionStatus.style.display = 'block';
+            }
+        }
+    }
+
+
+    function log(message, addNewline = true) {
+        logOutputTextarea.value += message + (addNewline ? '\n' : '');
+        logOutputTextarea.scrollTop = logOutputTextarea.scrollHeight;
+    }
+
+    function showStatusMessage(message, type = "info") {
+        statusMessage.textContent = message;
+        statusMessage.style.backgroundColor = type === "error" ? '#dc3545' : (type === "success" ? '#28a745' : 'rgba(0,0,0,0.7)');
+        statusMessage.style.display = 'block';
+        setTimeout(() => {
+            statusMessage.style.display = 'none';
+        }, 3000);
+    }
+
+    function updateProgressBar(current, total) {
+        const percentage = total > 0 ? (current / total) * 100 : 0;
+        progressBarFill.style.width = `${percentage}%`;
+        progressBarText.textContent = `${Math.round(percentage)}%`;
+    }
+
+    // --- DOM Element Creation Helpers ---
+    function createLabel(text, marginTop = '0px') {
+        const label = document.createElement('label');
+        label.textContent = text;
+        applyStyles(label, { marginBottom: '5px', fontWeight: 'bold', marginTop });
+        return label;
+    }
+
+    function createInput(type, id, placeholder) {
+        const input = document.createElement('input');
+        input.type = type;
+        input.id = id;
+        input.placeholder = placeholder;
+        applyStyles(input, { width: 'calc(100% - 24px)', padding: '10px 12px', border: '1px solid #ced4da', borderRadius: '6px', fontSize: '14px' });
+        return input;
+    }
+
+    function createTextarea(id, rows, isReadOnly) {
+        const textarea = document.createElement('textarea');
+        textarea.id = id;
+        textarea.rows = rows;
+        textarea.readOnly = isReadOnly;
+        applyStyles(textarea, { width: 'calc(100% - 24px)', padding: '10px 12px', border: '1px solid #ced4da', borderRadius: '6px', backgroundColor: '#e9ecef', fontSize: '13px', resize: 'vertical' });
+        return textarea;
+    }
+
+
+    function createProgressBar() {
+        const container = document.createElement('div');
+        applyStyles(container, { position: 'relative', width: 'calc(100% - 24px)', height: '18px', backgroundColor: '#e9ecef', border: '1px solid #ced4da', borderRadius: '4px', marginTop: '-10px', overflow: 'hidden', display: 'none', textAlign: 'center' });
+        const fill = document.createElement('div');
+        applyStyles(fill, { width: '0%', height: '100%', background: THEME.primaryGradient, transition: 'width 0.2s ease-in-out' });
+        const text = document.createElement('span');
+        applyStyles(text, { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: '#fff', fontSize: '11px', fontWeight: 'bold', textShadow: '1px 1px 2px rgba(0,0,0,0.6)' });
+        container.appendChild(fill);
+        container.appendChild(text);
+        return { progressBarContainer: container, progressBarFill: fill, progressBarText: text };
+    }
+
+    function createCompletionStatus() {
+        const status = document.createElement('div');
+        applyStyles(status, { display: 'none', textAlign: 'center', marginTop: '0px', padding: '1px 0', fontWeight: 'bold', fontSize: '12px', lineHeight: '1.4' });
+        return status;
+    }
+
+    function createButton(text, background, clickHandler) {
+        const button = document.createElement('button');
+        button.textContent = text;
+        applyStyles(button, { padding: '12px', background: background, color: THEME.lightText, border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold', transition: 'transform 0.2s ease, box-shadow 0.2s ease' });
+        button.addEventListener('click', clickHandler);
+        return button;
+    }
+
+    function createStatusMessage() {
+        const msg = document.createElement('div');
+        applyStyles(msg, { position: 'fixed', bottom: '20px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', padding: '8px 15px', borderRadius: '4px', zIndex: '100000', display: 'none', fontSize: '13px' });
+        return msg;
+    }
+
+    // --- Generic Utilities ---
+    function applyStyles(element, styles) { for (const p in styles) { element.style[p] = styles[p];
+    } }
+    function buttonHoverEffect(btn, shadowColor = 'rgba(212, 82, 157, 0.4)') {
+        const initialShadow = btn.style.boxShadow || 'none';
+        btn.onmouseover = () => { btn.style.transform = 'translateY(-2px)'; btn.style.boxShadow = `0 4px 8px ${shadowColor}`; };
+        btn.onmouseout = () => { btn.style.transform = 'translateY(0)'; btn.style.boxShadow = initialShadow; };
+    }
+    function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // --- Drag Functionality ---
+    menuHeader.addEventListener('mousedown', (e) => { if (e.target === closeButton || e.target.parentElement === closeButton) return; isDragging = true; offsetX = e.clientX - menu.offsetLeft; offsetY = e.clientY - menu.offsetTop; menu.style.cursor = 'grabbing'; document.body.style.userSelect = 'none'; });
+    document.addEventListener('mousemove', (e) => { if (!isDragging) return; let newX = e.clientX - offsetX; let newY = e.clientY - offsetY; const menuRect = menu.getBoundingClientRect(); if (newX < 0) newX = 0; if (newY < 0) newY = 0; if (newX + menuRect.width > window.innerWidth) newX = window.innerWidth - menuRect.width; if (newY + menuRect.height > window.innerHeight) newY = window.innerHeight - menuRect.height; menu.style.left = `${newX}px`; menu.style.top = `${newY}px`; menu.style.transform = 'none'; });
+    document.addEventListener('mouseup', () => { if (isDragging) { isDragging = false; menu.style.cursor = 'move'; document.body.style.userSelect = ''; } });
+    // --- Polling and Waiting Functions ---
+    function pollForElement(selector, shouldExist, timeout = 5000) {
+        return new Promise((resolve, reject) => {
+            const interval = 100;
+            let elapsedTime = 0;
+            const poller = setInterval(() => {
+                const element = document.querySelector(selector);
+     
+                elapsedTime += interval;
+                const conditionMet = shouldExist ? element : !element;
+                if (conditionMet) {
+                    clearInterval(poller);
+                    resolve(element);
+      
+                } else if (elapsedTime >= timeout) {
+                    clearInterval(poller);
+                    reject(new Error(`Timeout polling for element '${selector}' to ${shouldExist ? 'exist' : 'disappear'}.`));
+                }
+            }, interval);
+    
+        });
+    }
+
+    function pollForElementToDisappear(element, timeout = 5000) {
+        return new Promise((resolve, reject) => {
+            if (!element || !element.parentElement) { resolve(); return; }
+            const interval = 100;
+            let elapsedTime = 0;
+            const poller = setInterval(() => {
+       
+                 elapsedTime += interval;
+                if (!document.body.contains(element)) {
+                    clearInterval(poller);
+                    resolve();
+                } else if (elapsedTime >= timeout) {
+         
+                    clearInterval(poller);
+                    reject(new Error(`Timeout waiting for stale element to disappear.`));
+                }
+            }, interval);
+        });
+    }
+
+    function waitForPageNumberChange(expectedPage, timeout = 5000) {
+        return new Promise((resolve, reject) => {
+            const interval = 100;
+            let elapsedTime = 0;
+            const poller = setInterval(() => {
+                const activePageElement = document.querySelector('button.p-paginator-page.p-highlight');
+            
+                 elapsedTime += interval;
+                if (activePageElement && parseInt(activePageElement.innerText.trim(), 10) === expectedPage) {
+                    clearInterval(poller);
+                    resolve();
+                } else if (elapsedTime >= timeout) {
+         
+                    clearInterval(poller);
+                    reject(new Error(`Timeout waiting for page to switch to ${expectedPage}.`));
+                }
+            }, interval);
+        });
+    }
+
+    // --- Cleanup function ---
+    window.removeCollectorUI = function() { mainButton.remove(); menu.remove(); statusMessage.remove();
+    delete window.removeCollectorUI; console.log("Automatic Parameter Collector UI removed."); };
+    console.log("Automatic Parameter Collector UI Injected. Click the '🛠️ Auto Collector' button. Type 'removeCollectorUI()' in console to remove.");
 })();
                 </code></pre>
             </div>
