@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Count Calculator - Nearest Rounding</title>
+    <style>
+        /* Theme adapted from Azure DevOps Insights Tool */
+        :root {
+            /* Main Page Theme Colors */
+            --header-gradient-start: #4A0082; /* Deep Indigo/Purple */
+            --header-gradient-end: #D4529D;   /* Magenta/Pinkish Purple */
+            --header-text-color: #FFFFFF; 
+            
+            --body-bg-color: #F8F9FA; /* Light Page Background */
+            
+            --section-title-color: var(--header-gradient-start); 
+
+            --card-bg-color: #FFFFFF; /* White for sections/cards */
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+            --card-border-radius: 8px; 
+            --card-title-color: var(--header-gradient-start); 
+            --card-icon-color: #8A3DAF; /* Vibrant Purple for accents if needed */
+            
+            --primary-text-color: #333333; /* Dark Gray for body text */
+            --secondary-text-color: #555555; /* Medium Gray for less important text */
+            --border-color: #E0E0E0; /* Lighter border color */
+            
+            /* Buttons - Adapted from Main Page */
+            --button-bg: var(--header-gradient-start); 
+            --button-hover-bg: #3A006A; 
+            --button-text-color: #FFFFFF;
+            
+            /* Inputs & Textareas - Light theme */
+            --input-bg: #FFFFFF;
+            --input-border: #ced4da; 
+            --input-text: #495057; 
+            --input-focus-border: var(--card-icon-color); 
+
+            /* Notifications */
+            --notification-bg: var(--header-gradient-start); 
+            --notification-text: #FFFFFF;
+            --notification-error-bg: #dc3545; 
+            
+            /* Specific Text Colors */
+            --heading-color: var(--section-title-color); 
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--body-bg-color);
+            color: var(--primary-text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.65;
+            overflow-x: hidden;
+            box-sizing: border-box;
+        }
+
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+
+        .header {
+            background: linear-gradient(105deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
+            color: var(--header-text-color);
+            padding: 20px 30px;
+            font-size: 1.8rem; /* Adjusted for tool page title */
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px; /* Max width for content area */
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .section {
+            margin-bottom: 30px; /* Consistent spacing */
+            padding: 25px;
+            background-color: var(--card-bg-color);
+            border-radius: var(--card-border-radius);
+            box-shadow: var(--card-shadow);
+            transition: box-shadow 0.2s ease;
+        }
+        .section:hover {
+             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            margin-top: 0;
+            color: var(--heading-color);
+            border-bottom: 2px solid var(--header-gradient-start);
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+         .section h3 { /* For subheadings like "Calculation Steps" */
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: var(--secondary-text-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--primary-text-color);
+            margin-bottom: 8px;
+            font-size: 1rem;
+            font-weight: 600; /* Bolder labels */
+        }
+
+        #totalNumberInput, 
+        .input-group textarea { /* Apply to all textareas including results */
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            font-size: 1rem; /* Consistent font size */
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            line-height: 1.5;
+        }
+        
+        #totalNumberInput {
+             min-height: 80px;
+             resize: vertical;
+        }
+        .input-group textarea[readonly] { /* For result textareas */
+            min-height: 60px;
+            max-height: 150px; /* Allow some expansion for results */
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            cursor: default;
+            background-color: #f9f9f9; /* Slightly different background for readonly */
+            opacity: 0.9;
+        }
+
+
+        #totalNumberInput:focus,
+        .input-group textarea:focus { /* Focus style for all textareas */
+             border-color: var(--input-focus-border);
+             box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--input-focus-border) 25%, transparent);
+        }
+
+        #calculationStepsContainer {
+             margin-top: 15px; /* Reduced margin top */
+             padding: 20px;
+             background-color: #fdfdff; /* Light background for steps, similar to main page notes */
+             border: 1px solid var(--input-border);
+             border-radius: 5px;
+             min-height: 100px;
+             max-height: 350px; /* Increased max height */
+             overflow-y: auto;
+             white-space: pre-wrap;
+             word-wrap: break-word;
+             color: var(--primary-text-color);
+             font-size: 0.95rem; /* Slightly smaller font for steps */
+             line-height: 1.6;
+        }
+
+        #calculationStepsContainer:empty::before {
+             content: "Calculation steps will appear here after you enter a number.";
+             color: var(--secondary-text-color);
+             font-style: italic;
+        }
+
+        /* Custom Scrollbar Styling */
+        #totalNumberInput::-webkit-scrollbar,
+        .input-group textarea::-webkit-scrollbar,
+        #calculationStepsContainer::-webkit-scrollbar {
+            width: 8px; height: 8px;
+        }
+        #totalNumberInput::-webkit-scrollbar-track,
+        .input-group textarea::-webkit-scrollbar-track,
+        #calculationStepsContainer::-webkit-scrollbar-track {
+            background: #f1f1f1; border-radius: 10px;
+        }
+        #totalNumberInput::-webkit-scrollbar-thumb,
+        .input-group textarea::-webkit-scrollbar-thumb,
+        #calculationStepsContainer::-webkit-scrollbar-thumb {
+            background: var(--card-icon-color); border-radius: 10px;
+        }
+        #totalNumberInput::-webkit-scrollbar-thumb:hover,
+        .input-group textarea::-webkit-scrollbar-thumb:hover,
+        #calculationStepsContainer::-webkit-scrollbar-thumb:hover {
+            background: var(--header-gradient-start); 
+        }
+
+        .notification-container {
+            position: fixed; bottom: 25px; right: 25px;
+            display: flex; flex-direction: column; gap: 12px;
+            z-index: 2000; max-width: 320px;
+        }
+        .notification {
+            color: var(--notification-text); 
+            padding: 14px 22px; border-radius: 6px; font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
+            opacity: 0; transform: translateX(100%);
+            animation: slideInFadeIn 0.4s ease-out forwards;
+            background-color: var(--notification-bg); 
+        }
+        .notification.error { /* Added for consistency, though not used in current JS */
+            background-color: var(--notification-error-bg); 
+        }
+        @keyframes slideInFadeIn { to { opacity: 1; transform: translateX(0); } }
+        .notification.fade-out { animation: fadeOutRight 0.4s ease-out forwards; }
+        @keyframes fadeOutRight {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100%); }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                font-size: 1.5rem; /* Adjusted for smaller screens */
+                padding: 15px 20px;
+            }
+            .container {
+                width: 95%;
+                margin: 20px auto;
+                padding: 0 10px;
+            }
+            .section {
+                 padding: 20px;
+                 margin-bottom: 20px;
+            }
+            .section h2 {
+                 font-size: 1.4rem;
+                 padding-bottom: 10px;
+                 margin-bottom: 20px;
+            }
+            .section h3 {
+                font-size: 1.1rem;
+            }
+            #totalNumberInput, .input-group textarea {
+                font-size: 0.95rem;
+            }
+            #calculationStepsContainer {
+                  padding: 15px;
+                  font-size: 0.9rem;
+             }
+            .notification-container {
+                bottom: 10px; right: 10px; max-width: 95%;
+            }
+            .notification {
+                padding: 10px 15px; font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        Batch Count Calculator - Nearest Rounding
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>Calculator</h2>
+            <div class="input-group">
+                <label for="totalNumberInput">Input Counts Here:</label>
+                <textarea id="totalNumberInput" placeholder="Enter numbers here (one per line or comma-separated)..."></textarea>
+            </div>
+
+            <div class="input-group">
+                 <label for="roundOff1Result">Rounded Nearest Value:</label> 
+                 <textarea id="roundOff1Result" placeholder="Result 1..." readonly></textarea>
+            </div>
+
+            <div class="input-group">
+                 <label for="batchCountResult">Batch Count Result:</label>
+                 <textarea id="batchCountResult" placeholder="Result 2..." readonly></textarea>
+            </div>
+
+            <div class="input-group">
+                 <label for="roundOff2Result">Rounded - Batchcount:</label>
+                 <textarea id="roundOff2Result" placeholder="Result 3..." readonly></textarea>
+            </div>
+
+            <h3>Calculation Steps</h3>
+            <div id="calculationStepsContainer">
+                </div>
+        </div>
+    </div>
+
+    <div id="notification-container" class="notification-container"></div>
+
+    <script>
+        const totalNumberInput = document.getElementById('totalNumberInput');
+        const roundOff1Result = document.getElementById('roundOff1Result');
+        const batchCountResult = document.getElementById('batchCountResult');
+        const roundOff2Result = document.getElementById('roundOff2Result');
+        const calculationStepsContainer = document.getElementById('calculationStepsContainer');
+        const notificationContainer = document.getElementById('notification-container'); // Already defined in HTML
+
+        // Define constants
+        const CALCULATION_UNIT = 100; 
+        const ROUNDING_THRESHOLD_STEP2 = 50; 
+        const ROUNDING_UNIT_STEP2 = 100; 
+        const MAX_ALLOWED_COUNT = 60000; 
+        const NOTIFICATION_FADE_DURATION = 400; // Matches CSS animation
+
+        // Event Listener for input changes
+        totalNumberInput.addEventListener('input', calculateBatchCounts);
+
+        // Function to calculate batch counts and update UI
+        function calculateBatchCounts() {
+            const inputText = totalNumberInput.value.trim();
+
+            if (inputText === '') {
+                roundOff1Result.value = '';
+                batchCountResult.value = '';
+                roundOff2Result.value = '';
+                calculationStepsContainer.innerHTML = ''; 
+                return;
+            }
+
+            const numbers = inputText.split(/[\n,]/).map(numStr => parseFloat(numStr.trim())).filter(num => !isNaN(num));
+
+            let totalNumber;
+            if (numbers.length > 0) {
+                 totalNumber = numbers[0]; 
+                 if (numbers.length > 1) {
+                      showNotification("Multiple numbers found. Using the first valid number.", 4000);
+                 }
+            } else {
+                 showNotification("Please enter a valid number.", 3000, 'error'); // Added type
+                 roundOff1Result.value = '';
+                 batchCountResult.value = '';
+                 roundOff2Result.value = '';
+                 calculationStepsContainer.innerHTML = '';
+                 return;
+            }
+
+            if (totalNumber >= MAX_ALLOWED_COUNT) {
+                roundOff1Result.value = 'Invalid';
+                batchCountResult.value = 'Invalid';
+                roundOff2Result.value = 'Invalid';
+                calculationStepsContainer.innerHTML = `Input Count (${totalNumber}) is ${MAX_ALLOWED_COUNT} or greater. Calculation is invalid for this range.`;
+                showNotification(`Input count is too high (>= ${MAX_ALLOWED_COUNT}).`, 4000, 'error'); // Added type
+                return;
+            }
+
+             if (totalNumber < 0) {
+                 showNotification("Please enter a non-negative number.", 3000, 'error'); // Added type
+                 roundOff1Result.value = '';
+                 batchCountResult.value = '';
+                 roundOff2Result.value = '';
+                 calculationStepsContainer.innerHTML = '';
+                 return;
+            }
+
+            // --- Calculation Steps ---
+            const step1_result = totalNumber / CALCULATION_UNIT;
+            const step1_result_rounded_for_check = Math.round(step1_result); 
+
+            const lastTwoDigitsOfStep1 = step1_result_rounded_for_check % 100; 
+            let roundedNearestValue;
+            let roundingExplanation;
+
+            if (lastTwoDigitsOfStep1 >= ROUNDING_THRESHOLD_STEP2) {
+                roundedNearestValue = Math.ceil(step1_result / ROUNDING_UNIT_STEP2) * ROUNDING_UNIT_STEP2;
+                roundingExplanation = `Last 2 digits of Step 1 result (${lastTwoDigitsOfStep1}) are >= ${ROUNDING_THRESHOLD_STEP2}. Rounding Step 1 result (${step1_result.toFixed(2)}) up to the nearest ${ROUNDING_UNIT_STEP2}.`;
+            } else {
+                roundedNearestValue = Math.floor(step1_result / ROUNDING_UNIT_STEP2) * ROUNDING_UNIT_STEP2;
+                 roundingExplanation = `Last 2 digits of Step 1 result (${lastTwoDigitsOfStep1}) are < ${ROUNDING_THRESHOLD_STEP2}. Rounding Step 1 result (${step1_result.toFixed(2)}) down to the nearest ${ROUNDING_UNIT_STEP2}.`;
+            }
+
+            const batchCountResultValue = roundedNearestValue / CALCULATION_UNIT;
+            const roundedBatchcount = roundedNearestValue - batchCountResultValue;
+
+            // --- Update Result Textareas ---
+            roundOff1Result.value = roundedNearestValue;
+            batchCountResult.value = batchCountResultValue;
+            roundOff2Result.value = roundedBatchcount;
+
+            // --- Display Calculation Steps ---
+            calculationStepsContainer.innerHTML = `
+                Input Number: ${totalNumber}
+                Calculation Unit: ${CALCULATION_UNIT}
+                Rounding Unit (Step 2): ${ROUNDING_UNIT_STEP2}
+                Rounding Threshold (Step 2): ${ROUNDING_THRESHOLD_STEP2}
+                Maximum Allowed Count: ${MAX_ALLOWED_COUNT}
+
+                ---
+
+                Step 1: Input Number / ${CALCULATION_UNIT}
+                Calculation: ${totalNumber} / ${CALCULATION_UNIT} = ${step1_result.toFixed(4)}
+                Result: ${step1_result.toFixed(4)} 
+                (Value for rounding check: ${step1_result_rounded_for_check})
+
+                ---
+
+                Step 2: Rounded Nearest Value
+                Logic: Round Result of Step 1 to the nearest ${ROUNDING_UNIT_STEP2} based on its last 2 digits (threshold ${ROUNDING_THRESHOLD_STEP2}).
+                Last 2 digits of (rounded Step 1 result for check): ${lastTwoDigitsOfStep1}
+                Condition: ${lastTwoDigitsOfStep1} ${lastTwoDigitsOfStep1 >= ROUNDING_THRESHOLD_STEP2 ? '>=' : '<'} ${ROUNDING_THRESHOLD_STEP2}
+                ${roundingExplanation}
+                Calculation: ${lastTwoDigitsOfStep1 >= ROUNDING_THRESHOLD_STEP2 ? 'ceil' : 'floor'}(${step1_result.toFixed(4)} / ${ROUNDING_UNIT_STEP2}) * ${ROUNDING_UNIT_STEP2}
+                = ${lastTwoDigitsOfStep1 >= ROUNDING_THRESHOLD_STEP2 ? Math.ceil(step1_result / ROUNDING_UNIT_STEP2) : Math.floor(step1_result / ROUNDING_UNIT_STEP2)} * ${ROUNDING_UNIT_STEP2}
+                = ${roundedNearestValue}
+                Result: ${roundedNearestValue}
+
+                ---
+
+                Step 3: Batch Count Result
+                Calculation: Rounded Nearest Value / ${CALCULATION_UNIT}
+                = ${roundedNearestValue} / ${CALCULATION_UNIT}
+                = ${batchCountResultValue}
+                Result: ${batchCountResultValue}
+
+                ---
+
+                Step 4: Rounded - Batchcount
+                Calculation: Rounded Nearest Value - Batch Count Result
+                = ${roundedNearestValue} - ${batchCountResultValue}
+                = ${roundedBatchcount}
+                Result: ${roundedBatchcount}
+            `;
+        }
+
+        /**
+         * Shows a notification message.
+         * @param {string} message - The message to display.
+         * @param {number} [duration=3000] - Duration in milliseconds.
+         * @param {string} [type='info'] - 'info' or 'error'.
+         */
+        function showNotification(message, duration = 3000, type = 'info') {
+            if (!notificationContainer) {
+                   console.warn("Notification container not found.");
+                   return;
+            }
+
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            if (type === 'error') { // Add error class for specific styling
+                notification.classList.add('error');
+            }
+            notification.textContent = message;
+            notificationContainer.appendChild(notification);
+
+            const removeNotification = () => {
+                notification.classList.add('fade-out');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, NOTIFICATION_FADE_DURATION);
+            };
+            
+            setTimeout(removeNotification, duration); 
+        }
+
+        // Initial state setup
+        roundOff1Result.value = '';
+        batchCountResult.value = '';
+        roundOff2Result.value = '';
+        calculationStepsContainer.innerHTML = '';
+    </script>
+
+</body>
+</html>
