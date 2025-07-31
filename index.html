@@ -230,7 +230,7 @@
 
         const programs = [ 
             { id: 'parameter-extractor', name: 'Parameter Collector', icon: '🛠️', description: "A Script that automatically extracts parameters from failed pipelines of various Azure Function.", file: 'collect-params/' }, 
-            { id: 'batch-count-calculator', name: 'Batch Count Calculator', icon: '🧮', description: "Following from the flowchart of historical reingestion. This tool calculates/converts digits.", modal: batchCountModal }, 
+            { id: 'batch-count-calculator', name: 'Batch Count Calculator', icon: '🧮', description: "Based from the flowchart of historical reingestion. This tool calculates or converts batchcount/rowoffset.", modal: batchCountModal }, 
             { id: 'csv-to-json-processor', name: 'CSV to JSON (Release Environments) ', icon: '📄', description: "Filters CSV data and converts it to structured JSON.", file: 'csv-to-json-tool/'},
             { id: 'tool-4', name: 'Automated Alerts Monitoring', icon: '⚙️', description: "A Powershell Script that automatically send the data to Ms Teams via Webhooks", file: 'alerts-moni/'}, 
             { id: 'tool-5', name: 'Tool 5 (Future)', icon: '⚙️', description: "This tool isn't implemented yet.", file: '#'} 
@@ -340,8 +340,8 @@
         function showModal(modalElement) { if (modalElement) modalElement.classList.add('visible'); }
         function hideModal(modalElement) { if (modalElement) modalElement.classList.remove('visible'); }
 
-        batchCountHighestBtn.addEventListener('click', () => { window.open('Tools/Batchcountcalculator/batchcount_calculator-highestround.html', '_blank', 'noopener,noreferrer'); hideModal(batchCountModal); });
-        batchCountNearestBtn.addEventListener('click', () => { window.open('Tools/Batchcountcalculator/batchcount_calculator-nearestround.html', '_blank', 'noopener,noreferrer'); hideModal(batchCountModal); });
+        batchCountHighestBtn.addEventListener('click', () => { window.open('count-calcu/batchcount_calculator-highestround.html', '_blank', 'noopener,noreferrer'); hideModal(batchCountModal); });
+        batchCountNearestBtn.addEventListener('click', () => { window.open('count-calcu/batchcount_calculator-nearestround.html', '_blank', 'noopener,noreferrer'); hideModal(batchCountModal); });
         cancelBatchCountBtn.addEventListener('click', () => hideModal(batchCountModal));
         
         [batchCountModal].forEach(modal => { if (modal) { modal.addEventListener('click', (event) => { if (event.target === modal) hideModal(modal); });}});
