@@ -10,8 +10,8 @@
         /* CSS Root Variables for Theming */
         :root {
             /* Default (Light) Theme Colors */
-            --header-gradient-start: #0052A5; /* A more corporate blue */
-            --header-gradient-end: #00A3E0; /* A lighter, techy blue */
+            --header-gradient-start: #4A0082;
+            --header-gradient-end: #D4529D;
             --header-gradient-angle: 105deg;
             --header-main-title-color: #FFFFFF;
             --page-bg-color: #F8F9FA;
@@ -24,37 +24,37 @@
             --input-bg: rgba(255, 255, 255, 0.5);
             --input-border-color: #d1d5db;
             --input-text-color: #374151;
-            --accent-color: #007BFF; /* A standard, professional blue */
-            --accent-color-light: rgba(0, 123, 255, 0.1);
+            --accent-color: #8A3DAF;
+            --accent-color-light: rgba(138, 61, 175, 0.1);
             --toggle-icon-fill: #FFFFFF;
-            --success-bg: #d4edda;
-            --success-text: #155724;
-            --error-bg: #f8d7da;
-            --error-text: #721c24;
-            --info-bg: #d1ecf1;
-            --info-text: #0c5460;
+            --success-bg: #dcfce7;
+            --success-text: #166534;
+            --error-bg: #fee2e2;
+            --error-text: #991b1b;
+            --info-bg: #e0f2fe;
+            --info-text: #075985;
         }
 
         body.dark-mode {
-            --header-gradient-start: #1A293D;
-            --header-gradient-end: #2C5364;
-            --page-bg-color: #121212;
-            --card-bg-color: #1E1E1E;
-            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            --text-color: #EAEAEA;
-            --text-color-light: #A0A0A0;
-            --border-color: #444;
-            --input-bg: rgba(255, 255, 255, 0.05);
-            --input-border-color: #555;
-            --input-text-color: #EAEAEA;
-            --accent-color: #4D94FF;
-            --accent-color-light: rgba(77, 148, 255, 0.15);
-            --success-bg: #1d4d2c;
-            --success-text: #a3d9b1;
-            --error-bg: #5a2126;
-            --error-text: #e8a0a6;
-            --info-bg: #1c4a56;
-            --info-text: #9ed8e3;
+            --header-gradient-start: #23272A;
+            --header-gradient-end: #5865F2;
+            --page-bg-color: #2C2F33;
+            --card-bg-color: #23272A;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --text-color: #f3f4f6;
+            --text-color-light: #9ca3af;
+            --border-color: #4b5563;
+            --input-bg: rgba(20, 20, 20, 0.3);
+            --input-border-color: #4b5563;
+            --input-text-color: #f3f4f6;
+            --accent-color: #a78bfa;
+            --accent-color-light: rgba(167, 139, 250, 0.15);
+            --success-bg: #14532d;
+            --success-text: #bbf7d0;
+            --error-bg: #7f1d1d;
+            --error-text: #fecaca;
+            --info-bg: #1e40af;
+            --info-text: #bfdbfe;
         }
 
         /* General Styles */
@@ -216,15 +216,15 @@
             cursor: pointer;
         }
         .btn:hover { transform: translateY(-3px); box-shadow: 0 7px 20px rgba(0,0,0,0.15); }
-        .btn-save { background: linear-gradient(90deg, #007BFF 0%, #00A3E0 100%); }
-        .btn-copy { background: #6c757d; }
-        .btn-reset { background: #dc3545; }
+        .btn-save { background: linear-gradient(90deg, #8A3DAF 0%, #D4529D 100%); }
+        .btn-copy { background: #4b5563; }
+        .btn-reset { background: #ef4444; }
         
         #messageArea { margin-top: 1.5rem; text-align: center; font-size: 0.9rem; font-weight: 500; padding: 0.8rem; border-radius: 12px; opacity: 0; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease; }
         #messageArea.visible { opacity: 1; transform: translateY(0); }
-        #messageArea.success { background-color: var(--success-bg); color: var(--success-text); border: 1px solid #c3e6cb; }
-        #messageArea.error { background-color: var(--error-bg); color: var(--error-text); border: 1px solid #f5c6cb;}
-        #messageArea.info { background-color: var(--info-bg); color: var(--info-text); border: 1px solid #bee5eb;}
+        #messageArea.success { background-color: var(--success-bg); color: var(--success-text); }
+        #messageArea.error { background-color: var(--error-bg); color: var(--error-text); }
+        #messageArea.info { background-color: var(--info-bg); color: var(--info-text); }
 
     </style>
 </head>
