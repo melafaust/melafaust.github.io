@@ -298,13 +298,14 @@
 
     // --- Tenant Population ---
     function populateTenants() {
-        for (let i = 1; i <= 27; i++) {
-            const tenantId = `accenturecio${i.toString().padStart(2, '0')}`;
+        const tenantNumbers = ['01', '02', '03', '04', '05', '06', '07', '09', '10', '11', '20', '21', '22', '23', '24', '25', '27'];
+        tenantNumbers.forEach(num => {
+            const tenantId = `accenturecio${num}`;
             const option = document.createElement('option');
             option.value = tenantId;
             option.textContent = tenantId;
             tenantSelect.appendChild(option);
-        }
+        });
     }
 
     // --- Dark Mode Logic ---
@@ -430,12 +431,13 @@
 
         // Find the index of the relevant columns
         const col1_idx = headers.indexOf('projectname');
+        const col2_idx = headers.indexOf('definitionid');
         const col3_idx = headers.indexOf('buildid');
         const col10_idx = headers.indexOf('definitiontype');
         const statusColumnIndex = headers.indexOf('results');
 
-        if (col1_idx === -1 || col3_idx === -1 || col10_idx === -1 || statusColumnIndex === -1) {
-             showMessage('Could not find required columns: ProjectName, BuildId, DefinitionType, or Results.', 'error');
+        if (col1_idx === -1 || col2_idx === -1 || col3_idx === -1 || col10_idx === -1 || statusColumnIndex === -1) {
+             showMessage('Could not find required columns: ProjectName, DefinitionId, BuildId, DefinitionType, or Results.', 'error');
              return;
         }
 
@@ -447,13 +449,8 @@
             if (values.length > statusColumnIndex && values[statusColumnIndex]?.trim().toLowerCase() === processValue) {
                 const param1Val = values[col1_idx]?.trim() || "";
                 const param2Val = values[col3_idx]?.trim() || "";
+                const param3Val = values[col2_idx]?.trim() || "";
                 const param4Val = values[col10_idx]?.trim() || "";
-
-                let param3Val = "";
-                const underscoreIndex = param1Val.lastIndexOf('_');
-                if (underscoreIndex !== -1 && underscoreIndex < param1Val.length - 1) {
-                    param3Val = param1Val.substring(underscoreIndex + 1);
-                }
                 
                 return {
                     tenant: selectedTenant,
