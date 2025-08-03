@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV to JSON Converter (Build Environments)</title>
+    <link href="https://fonts.googleapis.com/css?family=Exo:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Root Variables for Theming */
+        :root {
+            /* Default (Light) Theme Colors */
+            --header-gradient-start: #0052A5; /* A more corporate blue */
+            --header-gradient-end: #00A3E0; /* A lighter, techy blue */
+            --header-gradient-angle: 105deg;
+            --header-main-title-color: #FFFFFF;
+            --page-bg-color: #F8F9FA;
+            --card-bg-color: #FFFFFF;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --card-border-radius: 16px;
+            --text-color: #222;
+            --text-color-light: #555;
+            --border-color: #e0e0e0;
+            --input-bg: rgba(255, 255, 255, 0.5);
+            --input-border-color: #d1d5db;
+            --input-text-color: #374151;
+            --accent-color: #007BFF; /* A standard, professional blue */
+            --accent-color-light: rgba(0, 123, 255, 0.1);
+            --toggle-icon-fill: #FFFFFF;
+            --success-bg: #d4edda;
+            --success-text: #155724;
+            --error-bg: #f8d7da;
+            --error-text: #721c24;
+            --info-bg: #d1ecf1;
+            --info-text: #0c5460;
+        }
+
+        body.dark-mode {
+            --header-gradient-start: #1A293D;
+            --header-gradient-end: #2C5364;
+            --page-bg-color: #121212;
+            --card-bg-color: #1E1E1E;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --text-color: #EAEAEA;
+            --text-color-light: #A0A0A0;
+            --border-color: #444;
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --input-border-color: #555;
+            --input-text-color: #EAEAEA;
+            --accent-color: #4D94FF;
+            --accent-color-light: rgba(77, 148, 255, 0.15);
+            --success-bg: #1d4d2c;
+            --success-text: #a3d9b1;
+            --error-bg: #5a2126;
+            --error-text: #e8a0a6;
+            --info-bg: #1c4a56;
+            --info-text: #9ed8e3;
+        }
+
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: 'Inter', 'Exo', sans-serif;
+            background-color: var(--page-bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        .top-header-wrapper {
+            background: linear-gradient(var(--header-gradient-angle), var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
+            color: var(--header-main-title-color);
+            padding: 15px 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .top-header-content {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .top-header-content h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .home-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--header-main-title-color);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .home-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        #dark-mode-toggle {
+            background: none;
+            border: none;
+            color: var(--toggle-icon-fill);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: transform 0.3s ease-in-out, background-color 0.2s ease;
+        }
+
+        #dark-mode-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            transition: transform 0.4s ease;
+        }
+
+        #dark-mode-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .sun-icon { display: none; }
+        .dark-mode .sun-icon { display: block; }
+        .dark-mode .moon-icon { display: none; }
+
+        /* Main Content Styles */
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem;
+            min-height: calc(100vh - 75px);
+        }
+
+        .tool-container {
+            width: 100%;
+            max-width: 56rem;
+            background: var(--card-bg-color);
+            padding: 2.5rem;
+            border-radius: var(--card-border-radius);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .tool-header { text-align: center; margin-bottom: 2.5rem; }
+        .tool-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--header-gradient-start), var(--header-gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+        .tool-header p { color: var(--text-color-light); margin-top: 0.5rem; font-size: 1.1rem; }
+
+        .input-label { font-weight: 600; margin-bottom: 0.5rem; display: block; }
+        .form-section { margin-bottom: 2rem; }
+        select, textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        select:focus, textarea:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px var(--accent-color-light); }
+        textarea { min-height: 16rem; font-family: 'SF Mono', 'Fira Code', monospace; resize: vertical; }
+
+        #dropZone {
+            border: 2px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        #dropZone:hover, #dropZone.dragover { border-color: var(--accent-color); background-color: var(--accent-color-light); }
+        #fileInput { display: none; }
+        .browse-link { color: var(--accent-color); text-decoration: underline; cursor: pointer; font-weight: 600; }
+
+        .button-group { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+        .btn {
+            color: #FFFFFF;
+            font-weight: 700;
+            padding: 0.8rem 1.75rem;
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 7px 20px rgba(0,0,0,0.15); }
+        .btn-save { background: linear-gradient(90deg, #007BFF 0%, #00A3E0 100%); }
+        .btn-copy { background: #6c757d; }
+        .btn-reset { background: #dc3545; }
+        
+        #messageArea { margin-top: 1.5rem; text-align: center; font-size: 0.9rem; font-weight: 500; padding: 0.8rem; border-radius: 12px; opacity: 0; transform: translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease; }
+        #messageArea.visible { opacity: 1; transform: translateY(0); }
+        #messageArea.success { background-color: var(--success-bg); color: var(--success-text); border: 1px solid #c3e6cb; }
+        #messageArea.error { background-color: var(--error-bg); color: var(--error-text); border: 1px solid #f5c6cb;}
+        #messageArea.info { background-color: var(--info-bg); color: var(--info-text); border: 1px solid #bee5eb;}
+
+    </style>
+</head>
+<body>
+
+    <div class="top-header-wrapper">
+        <div class="top-header-content">
+            <div class="header-left">
+                <a href="#" class="home-button">Home</a>
+                <h1>DevOps Tools</h1>
+            </div>
+            <button id="dark-mode-toggle" aria-label="Toggle Dark Mode">
+                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.64 5.64c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L5.64 5.64zm12.73 12.73c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.41-1.41zM5.64 18.36c.39.39.39 1.02 0 1.41-.39.39-1.02.39-1.41 0l-1.41-1.41c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l1.41 1.41zm12.73-12.73c.39.39.39 1.02 0 1.41-.39.39-1.02-.39-1.41 0l-1.41-1.41c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l1.41 1.41z"/></svg>
+                <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12.3 4.9c.4-.2.6-.7.4-1.1-.2-.4-.7-.6-1.1-.4C7.8 4.8 5 8.3 5 12.5c0 4.4 3.6 8 8 8 3.7 0 6.8-2.5 7.8-6c.2-.4 0-.9-.4-1.1s-.9 0-1.1.4c-.8 2.3-3 4-5.4 4-3.3 0-6-2.7-6-6 0-2.9 2.1-5.4 5-5.9z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <main class="main-container">
+        <div class="tool-container">
+            <header class="tool-header">
+                <h2>CSV to JSON Converter</h2>
+                <h3>(Build Environments)</h3>
+                <p>Instantly transform your CSV files into clean, structured JSON for Reingestion.</p>
+            </header>
+
+            <section class="form-section">
+                <label for="tenantSelect" class="input-label">Tenant:</label>
+                <select id="tenantSelect">
+                    <option value="">-- Select Tenant --</option>
+                </select>
+            </section>
+
+            <section class="form-section">
+                <div id="dropZone">
+                    <p style="font-size: 1.2rem; font-weight: 600;">Drag & Drop CSV File Here</p>
+                    <p style="color: var(--text-color-light); margin-top: 0.25rem;">or <span class="browse-link" onclick="document.getElementById('fileInput').click()">browse files</span></p>
+                    <input type="file" id="fileInput" accept=".csv, text/csv">
+                    <div id="fileInfo" style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-color-light);"></div>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <label for="outputBox" class="input-label">JSON Output:</label>
+                <textarea id="outputBox" readonly placeholder="1. Select a Tenant.&#10;2. Drop a CSV file.&#10;3. Formatted, unique JSON will appear here automatically."></textarea>
+            </section>
+
+            <section class="button-group">
+                <button id="saveButton" class="btn btn-save">Save as .txt</button>
+                <button id="copyButton" class="btn btn-copy">Copy Output</button>
+                <button id="resetButton" class="btn btn-reset">Reset All</button>
+            </section>
+
+            <div id="messageArea"></div>
+        </div>
+    </main>
+
+<script>
+    // --- DOM Element References ---
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const outputBox = document.getElementById('outputBox');
+    const fileInfoDiv = document.getElementById('fileInfo');
+    const tenantSelect = document.getElementById('tenantSelect');
+    const saveButton = document.getElementById('saveButton');
+    const copyButton = document.getElementById('copyButton');
+    const resetButton = document.getElementById('resetButton');
+    const messageArea = document.getElementById('messageArea');
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const DARK_MODE_STORAGE_KEY = 'adoInsightsToolDarkMode_Builds_v1';
+
+    // --- Tenant Population ---
+    function populateTenants() {
+        for (let i = 1; i <= 27; i++) {
+            const tenantId = `accenturecio${i.toString().padStart(2, '0')}`;
+            const option = document.createElement('option');
+            option.value = tenantId;
+            option.textContent = tenantId;
+            tenantSelect.appendChild(option);
+        }
+    }
+
+    // --- Dark Mode Logic ---
+    function applyDarkMode(isDark) {
+        document.body.classList.toggle('dark-mode', isDark);
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+        const isDarkMode = document.body.classList.toggle('dark-mode');
+        try {
+            localStorage.setItem(DARK_MODE_STORAGE_KEY, isDarkMode);
+        } catch (e) {
+            console.warn("Could not save dark mode preference to localStorage.", e);
+        }
+    });
+    
+    // --- CSV Processing Logic ---
+    /**
+     * Parses a single row of a CSV string, handling quoted fields.
+     * @param {string} rowString The string for a single CSV row.
+     * @returns {string[]} An array of values from the row.
+     */
+    function parseCsvRow(rowString) {
+        const values = [];
+        let inQuotes = false;
+        let currentValue = '';
+        for (let i = 0; i < rowString.length; i++) {
+            const char = rowString[i];
+            if (char === '"') {
+                if (inQuotes && i + 1 < rowString.length && rowString[i+1] === '"') {
+                    currentValue += '"'; 
+                    i++; 
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === ',' && !inQuotes) {
+                values.push(currentValue.trim());
+                currentValue = '';
+            } else {
+                currentValue += char;
+            }
+        }
+        values.push(currentValue.trim());
+        return values;
+    }
+
+    /**
+     * Handles the file input (from drag-drop or browse).
+     * @param {File} file The file object to process.
+     */
+    function handleFile(file) {
+        if (!file || (!file.type.match('text/csv') && !file.name.endsWith('.csv'))) {
+            showMessage('Please drop or select a valid CSV file.', 'error');
+            return;
+        }
+        
+        const selectedTenant = tenantSelect.value;
+        if (!selectedTenant) {
+            showMessage('Please select a Tenant first.', 'error');
+            fileInput.value = null; 
+            return;
+        }
+
+        fileInfoDiv.textContent = `Processing: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+        outputBox.value = ''; 
+        showMessage('Reading and processing file...', 'info');
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const csvString = e.target.result;
+                processCsvData(csvString);
+            } catch (error) {
+                showMessage('An unexpected error occurred during processing.', 'error');
+                console.error("Processing Error:", error);
+            }
+        };
+        reader.onerror = () => {
+            showMessage('Error reading file.', 'error');
+            fileInfoDiv.textContent = 'Error reading file.';
+        };
+        reader.readAsText(file);
+    }
+
+    /**
+     * Converts a value to a number if possible, otherwise returns the original value.
+     * @param {string} value The string value to convert.
+     * @returns {number|string} The converted number or original string.
+     */
+    function toNumeric(value) {
+        if (value === null || value === '' || value === undefined) return value;
+        const num = Number(value);
+        return isNaN(num) || value.trim() === '' ? value : num;
+    }
+
+    /**
+     * Processes the raw CSV string data into the desired JSON format.
+     * @param {string} csvString The entire content of the CSV file as a string.
+     */
+    function processCsvData(csvString) {
+        const lines = csvString.split(/\r\n|\r|\n/).filter(line => line.trim() !== '');
+        
+        let headerIndex = -1;
+        for(let i = 0; i < lines.length; i++) {
+            if (lines[i].toLowerCase().includes('projectname')) {
+                headerIndex = i;
+                break;
+            }
+        }
+
+        if (headerIndex === -1) {
+             showMessage('Could not find a valid header row containing "ProjectName".', 'error');
+             return;
+        }
+        
+        if (lines.length < headerIndex + 2) {
+             showMessage('CSV needs a header and at least one data row.', 'error');
+             return;
+        }
+
+        const dataLines = lines.slice(headerIndex + 1);
+        const headers = parseCsvRow(lines[headerIndex]).map(h => h.trim().toLowerCase());
+
+        // Find the index of the relevant columns
+        const col1_idx = headers.indexOf('projectname');
+        const col3_idx = headers.indexOf('buildid');
+        const col10_idx = headers.indexOf('definitiontype');
+        const statusColumnIndex = headers.indexOf('results');
+
+        if (col1_idx === -1 || col3_idx === -1 || col10_idx === -1 || statusColumnIndex === -1) {
+             showMessage('Could not find required columns: ProjectName, BuildId, DefinitionType, or Results.', 'error');
+             return;
+        }
+
+        const processValue = 'missing';
+        const selectedTenant = tenantSelect.value;
+
+        const processedObjects = dataLines.map(line => {
+            const values = parseCsvRow(line);
+            if (values.length > statusColumnIndex && values[statusColumnIndex]?.trim().toLowerCase() === processValue) {
+                const param1Val = values[col1_idx]?.trim() || "";
+                const param2Val = values[col3_idx]?.trim() || "";
+                const param4Val = values[col10_idx]?.trim() || "";
+
+                let param3Val = "";
+                const underscoreIndex = param1Val.lastIndexOf('_');
+                if (underscoreIndex !== -1 && underscoreIndex < param1Val.length - 1) {
+                    param3Val = param1Val.substring(underscoreIndex + 1);
+                }
+                
+                return {
+                    tenant: selectedTenant,
+                    param1: param1Val,
+                    param2: toNumeric(param2Val),
+                    param3: toNumeric(param3Val),
+                    param4: param4Val
+                };
+            }
+            return null;
+        }).filter(Boolean); // Filter out null values
+
+        const uniqueObjects = [];
+        const seenSignatures = new Set();
+        processedObjects.forEach(obj => {
+            const signature = JSON.stringify(obj); 
+            if (!seenSignatures.has(signature)) {
+                seenSignatures.add(signature);
+                uniqueObjects.push(obj);
+            }
+        });
+
+        const finalOutputString = uniqueObjects.map(obj => JSON.stringify(obj, null, 4)).join(',\n');
+        outputBox.value = finalOutputString;
+        outputBox.scrollTop = 0; 
+
+        showMessage(`Success! Found ${uniqueObjects.length} unique JSON objects to process.`, 'success');
+    }
+
+    // --- Event Listeners ---
+    dropZone.addEventListener('dragover', (event) => { event.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (event.dataTransfer.files.length) handleFile(event.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', (event) => { if (event.target.files.length) handleFile(event.target.files[0]); });
+    
+    // Home button alert
+    document.querySelector('.home-button').addEventListener('click', (e) => {
+        e.preventDefault();
+        // A custom modal would be better, but alert is used for simplicity here.
+        alert('This would return to the main page.');
+    });
+
+    saveButton.addEventListener('click', () => {
+        const textToSave = outputBox.value;
+        const selectedTenant = tenantSelect.value;
+        if (!textToSave) { showMessage("Nothing to save.", 'info'); return; }
+        if (!selectedTenant) { showMessage("Please select a Tenant to name the file.", 'error'); return; }
+
+        try {
+            const blob = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${selectedTenant}_builds_output.txt`; 
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+            showMessage('Download initiated.', 'success');
+        } catch (e) {
+            showMessage('Save failed. See console for details.', 'error');
+            console.error('Save Error:', e);
+        }
+    });
+
+    copyButton.addEventListener('click', () => {
+        if (!outputBox.value) { showMessage("Nothing to copy.", 'info'); return; }
+        // Use the older execCommand for better iframe compatibility
+        const textArea = document.createElement('textarea');
+        textArea.value = outputBox.value;
+        textArea.style.position = 'fixed'; // Avoid scrolling to bottom
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showMessage('Copied to clipboard!', 'success');
+        } catch (err) {
+            showMessage('Failed to copy. See console for details.', 'error'); 
+            console.error('Clipboard Error: ', err);
+        }
+        document.body.removeChild(textArea);
+    });
+
+    resetButton.addEventListener('click', () => {
+        outputBox.value = '';
+        fileInfoDiv.textContent = '';
+        fileInput.value = null; 
+        tenantSelect.value = ""; 
+        showMessage('Tool has been reset.', 'info');
+    });
+
+    let messageTimer;
+    /**
+     * Displays a temporary message to the user.
+     * @param {string} message The message to display.
+     * @param {'info'|'success'|'error'} type The type of message.
+     */
+    function showMessage(message, type = 'info') {
+        clearTimeout(messageTimer);
+        messageArea.textContent = message;
+        messageArea.className = 'visible'; 
+        messageArea.classList.add(type);
+        
+        messageTimer = setTimeout(() => {
+            messageArea.classList.remove('visible');
+        }, 5000);
+    }
+
+    // --- Initial Load ---
+    document.addEventListener('DOMContentLoaded', () => {
+        populateTenants();
+        try {
+            applyDarkMode(localStorage.getItem(DARK_MODE_STORAGE_KEY) === 'true');
+        } catch(e) {
+            console.warn("Could not access localStorage.", e);
+        }
+    });
+</script>
+
+</body>
+</html>
