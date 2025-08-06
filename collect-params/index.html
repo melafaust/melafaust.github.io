@@ -313,7 +313,7 @@
     menuHeader.textContent = MENU_TITLE;
     applyStyles(menuHeader, { padding: '12px 20px', background: THEME.primaryGradient, color: THEME.lightText, cursor: 'move', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textShadow: '1px 1px 2px rgba(0,0,0,0.3)' });
     const closeButton = document.createElement('button');
-    closeButton.innerHTML = '&times;';
+    closeButton.innerHTML = '×';
     applyStyles(closeButton, { background: 'none', border: 'none', fontSize: '24px', fontWeight: 'bold', cursor: 'pointer', color: THEME.lightText, padding: '0 5px', transition: 'transform 0.3s ease' });
     closeButton.onmouseover = () => closeButton.style.transform = 'rotate(90deg)';
     closeButton.onmouseout = () => closeButton.style.transform = 'rotate(0deg)';
@@ -328,6 +328,14 @@
     const activityInput = createInput('text', 'scraper-activity-name', 'e.g., Send Areas');
     menuContent.appendChild(activityLabel);
     menuContent.appendChild(activityInput);
+
+    // --- ADDED: Date Picker for filename ---
+    const dateLabel = createLabel('Date for Filename (Optional):', '10px');
+    const dateInput = createInput('date', 'scraper-date-input', '');
+    applyStyles(dateInput, { padding: '8px 12px' }); // Adjust padding for date input
+    menuContent.appendChild(dateLabel);
+    menuContent.appendChild(dateInput);
+    // --- END ADDITION ---
 
     const logOutputLabel = createLabel('Processing Log:');
     const logOutputTextarea = createTextarea('scraper-log-output', 4, true);
@@ -562,34 +570,37 @@
             return;
         }
 
-        // MODIFIED: Always save as a .txt file.
         const extension = 'txt';
-
-        // Get the base name from the input field.
         let baseName = activityInput.value.trim().replace(/[^a-z0-9]/gi, '_') || "scraped_data";
-        
-        // MODIFIED: Adjust the base name to better match the example (e.g., "Send_WorkItems" becomes "WorkItems").
         let formattedBaseName = baseName.replace(/^Send_/, '');
-
-        // Handle the counter for unique filenames.
         saveCounters[baseName] = (saveCounters[baseName] || 0) + 1;
         const counter = saveCounters[baseName];
 
-        // MODIFIED: Format the date to "Month Day, Year".
-        const formattedDate = new Date().toLocaleDateString('en-US', {
+        // --- MODIFIED: Get date from date picker or use current date ---
+        let selectedDate;
+        const dateValue = document.getElementById('scraper-date-input').value;
+
+        if (dateValue) {
+            // The date input value is a string like "YYYY-MM-DD".
+            // To prevent timezone issues where it might be interpreted as the previous day,
+            // we add 'T00:00:00' to treat it as local time at midnight.
+            selectedDate = new Date(dateValue + 'T00:00:00');
+        } else {
+            // If no date is selected, fall back to the current date.
+            selectedDate = new Date();
+        }
+
+        const formattedDate = selectedDate.toLocaleDateString('en-US', {
             month: 'long',
             day: 'numeric',
             year: 'numeric'
         });
-        
-        // MODIFIED: Assemble the new suggested filename.
+        // --- END MODIFICATION ---
+
         const suggestedFilename = `${formattedBaseName}_${counter} (${formattedDate}).${extension}`;
-        
-        // Prompt the user to enter or confirm the filename.
         const filename = prompt("Please enter a filename:", suggestedFilename);
 
         if (!filename) {
-            // If the user cancels the prompt, stop the save.
             saveCounters[baseName]--;
             showStatusMessage("Save cancelled.", "info");
             return;
@@ -626,6 +637,7 @@
             return;
         }
         activityInput.value = '';
+        document.getElementById('scraper-date-input').value = ''; // ADDED
         logOutputTextarea.value = '';
         formattedOutput.value = '';
         updateProgressBar(0, 1);
@@ -651,10 +663,9 @@
             let statusColor = '';
             switch (finalStatus) {
                 case 'success':
-                    statusText = `✅ Processing Complete!
-Ready for Rerun.`;
+                    statusText = `✅ Processing Complete!\nReady for Rerun.`;
                     if (cleanseStats) {
-                        statusText += `<br><small>Found ${cleanseStats.uniqueCount} unique Params (${cleanseStats.duplicatesFound} duplicates removed).</small>`;
+                        statusText += `\nFound ${cleanseStats.uniqueCount} unique Params (${cleanseStats.duplicatesFound} duplicates removed).`;
                     }
                     statusColor = '#28a745';
                     break;
@@ -777,13 +788,13 @@ Ready for Rerun.`;
             let elapsedTime = 0;
             const poller = setInterval(() => {
                 const element = document.querySelector(selector);
-     
+    
                 elapsedTime += interval;
                 const conditionMet = shouldExist ? element : !element;
                 if (conditionMet) {
                     clearInterval(poller);
                     resolve(element);
-      
+        
                 } else if (elapsedTime >= timeout) {
                     clearInterval(poller);
                     reject(new Error(`Timeout polling for element '${selector}' to ${shouldExist ? 'exist' : 'disappear'}.`));
@@ -799,13 +810,13 @@ Ready for Rerun.`;
             const interval = 100;
             let elapsedTime = 0;
             const poller = setInterval(() => {
-       
-                 elapsedTime += interval;
+    
+                    elapsedTime += interval;
                 if (!document.body.contains(element)) {
                     clearInterval(poller);
                     resolve();
                 } else if (elapsedTime >= timeout) {
-         
+        
                     clearInterval(poller);
                     reject(new Error(`Timeout waiting for stale element to disappear.`));
                 }
@@ -820,12 +831,12 @@ Ready for Rerun.`;
             const poller = setInterval(() => {
                 const activePageElement = document.querySelector('button.p-paginator-page.p-highlight');
             
-                 elapsedTime += interval;
+                    elapsedTime += interval;
                 if (activePageElement && parseInt(activePageElement.innerText.trim(), 10) === expectedPage) {
                     clearInterval(poller);
                     resolve();
                 } else if (elapsedTime >= timeout) {
-         
+        
                     clearInterval(poller);
                     reject(new Error(`Timeout waiting for page to switch to ${expectedPage}.`));
                 }
