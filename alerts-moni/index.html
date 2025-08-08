@@ -278,13 +278,13 @@ foreach ($group in $groupedByDate) {
     $message += "**📅 Failed Pipelines Report – $formattedDate**`n`n"
     $message += "```````n"
 
-    # Filter Transform_DimFact failures
-    $dimFactFailures = $group.Group | Where-Object { $_.'Pipeline name' -like "*Transform_DimFact*" }
+    # Filter Transform_DimFact and Transform_ALM failures
+    $detailedFailures = $group.Group | Where-Object { $_.'Pipeline name' -like "*Transform_DimFact*" -or $_.'Pipeline name' -like "*Transform_ALM*" }
 
-    if ($dimFactFailures.Count -eq 0) {
-        $message += "❌ No Transform_DimFact failures found for this date.`n`n"
+    if ($detailedFailures.Count -eq 0) {
+        $message += "✅ No Transform_DimFact or Transform_ALM failures found for this date.`n`n"
     } else {
-        foreach ($pipeline in $dimFactFailures) {
+        foreach ($pipeline in $detailedFailures) {
             $pipelineName = $pipeline.'Pipeline name'
             $errorMessage = $pipeline.'Error'
 
