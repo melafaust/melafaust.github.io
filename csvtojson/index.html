@@ -273,7 +273,9 @@
             </section>
 
             <section class="button-group">
-                <button id="saveButton" class="btn btn-save">Save as .txt</button>
+                <button id="saveTxtButton" class="btn btn-save">Save as .txt</button>
+                <button id="saveJsonButton" class="btn btn-save">Save as .json</button>
+                <button id="saveCsvButton" class="btn btn-save">Save as .csv</button>
                 <button id="copyButton" class="btn btn-copy">Copy Output</button>
                 <button id="resetButton" class="btn btn-reset">Reset All</button>
             </section>
@@ -289,12 +291,17 @@
     const outputBox = document.getElementById('outputBox');
     const fileInfoDiv = document.getElementById('fileInfo');
     const tenantSelect = document.getElementById('tenantSelect');
-    const saveButton = document.getElementById('saveButton');
+    const saveTxtButton = document.getElementById('saveTxtButton');
+    const saveJsonButton = document.getElementById('saveJsonButton');
+    const saveCsvButton = document.getElementById('saveCsvButton');
     const copyButton = document.getElementById('copyButton');
     const resetButton = document.getElementById('resetButton');
     const messageArea = document.getElementById('messageArea');
     const darkModeToggle = document.getElementById('dark-mode-toggle');
     const DARK_MODE_STORAGE_KEY = 'adoInsightsToolDarkMode_Builds_v1';
+
+    // --- State to hold processed JSON objects ---
+    let processedJsonObjects = [];
 
     // --- Tenant Population ---
     function populateTenants() {
@@ -443,7 +450,7 @@
         const processValue = 'missing';
         const selectedTenant = tenantSelect.value;
 
-        const processedObjects = dataLines.map(line => {
+        const allObjects = dataLines.map(line => {
             const values = parseCsvRow(line);
             if (values.length > statusColumnIndex && values[statusColumnIndex]?.trim().toLowerCase() === processValue) {
                 const param1Val = values[col1_idx]?.trim() || "";
@@ -469,13 +476,16 @@
 
         const uniqueObjects = [];
         const seenSignatures = new Set();
-        processedObjects.forEach(obj => {
+        allObjects.forEach(obj => {
             const signature = JSON.stringify(obj); 
             if (!seenSignatures.has(signature)) {
                 seenSignatures.add(signature);
                 uniqueObjects.push(obj);
             }
         });
+
+        // Store the unique objects for later use in saving
+        processedJsonObjects = uniqueObjects;
 
         const finalOutputString = uniqueObjects.map(obj => JSON.stringify(obj, null, 4)).join(',\n');
         outputBox.value = finalOutputString;
@@ -501,17 +511,12 @@
         alert('This would return to the main page.');
     });
 
-    saveButton.addEventListener('click', () => {
-        const textToSave = outputBox.value;
-        const selectedTenant = tenantSelect.value;
-        if (!textToSave) { showMessage("Nothing to save.", 'info'); return; }
-        if (!selectedTenant) { showMessage("Please select a Tenant to name the file.", 'error'); return; }
-
+    function downloadFile(content, fileName, mimeType) {
         try {
-            const blob = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
+            const blob = new Blob([content], { type: mimeType });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `${selectedTenant}_builds_output.txt`; 
+            a.download = fileName;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -521,6 +526,55 @@
             showMessage('Save failed. See console for details.', 'error');
             console.error('Save Error:', e);
         }
+    }
+
+    saveTxtButton.addEventListener('click', () => {
+        const textToSave = outputBox.value;
+        const selectedTenant = tenantSelect.value;
+        if (!textToSave) { showMessage("Nothing to save.", 'info'); return; }
+        if (!selectedTenant) { showMessage("Please select a Tenant to name the file.", 'error'); return; }
+        const fileName = `${selectedTenant}_builds_output.txt`;
+        downloadFile(textToSave, fileName, 'text/plain;charset=utf-8');
+    });
+    
+    saveJsonButton.addEventListener('click', () => {
+        const selectedTenant = tenantSelect.value;
+        if (processedJsonObjects.length === 0) { showMessage("No data to save.", 'info'); return; }
+        if (!selectedTenant) { showMessage("Please select a Tenant to name the file.", 'error'); return; }
+        
+        const jsonString = JSON.stringify(processedJsonObjects, null, 4); // Pretty print the valid JSON array
+        const fileName = `${selectedTenant}_builds_output.json`;
+        downloadFile(jsonString, fileName, 'application/json;charset=utf-8');
+    });
+
+    saveCsvButton.addEventListener('click', () => {
+        const selectedTenant = tenantSelect.value;
+        if (processedJsonObjects.length === 0) { showMessage("No data to save.", 'info'); return; }
+        if (!selectedTenant) { showMessage("Please select a Tenant to name the file.", 'error'); return; }
+
+        const header = "tenant,ProjectName,BuildId,AirId,definitiontype\n";
+        let csvContent = header;
+
+        processedJsonObjects.forEach(item => {
+            // Function to safely wrap values in quotes if they contain commas
+            const escapeCsv = (val) => {
+                if (val === null || val === undefined) return '';
+                const str = String(val);
+                if (str.includes(',')) return `"${str}"`;
+                return str;
+            };
+            const row = [
+                escapeCsv(item.tenant),
+                escapeCsv(item.param1),
+                escapeCsv(item.param2),
+                escapeCsv(item.param3),
+                escapeCsv(item.param4)
+            ].join(',') + '\n';
+            csvContent += row;
+        });
+        
+        const fileName = `${selectedTenant}_builds_output.csv`;
+        downloadFile(csvContent, fileName, 'text/csv;charset=utf-8;');
     });
 
     copyButton.addEventListener('click', () => {
@@ -547,6 +601,7 @@
         fileInfoDiv.textContent = '';
         fileInput.value = null; 
         tenantSelect.value = ""; 
+        processedJsonObjects = []; // Clear the stored data
         showMessage('Tool has been reset.', 'info');
     });
 
