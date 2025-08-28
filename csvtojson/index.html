@@ -233,7 +233,7 @@
     <div class="top-header-wrapper">
         <div class="top-header-content">
             <div class="header-left">
-                <a href="#" class="home-button">Home</a>
+                <a href="../" class="home-button">Home</a>
                 <h1>DevOps Tools</h1>
             </div>
             <button id="dark-mode-toggle" aria-label="Toggle Dark Mode">
@@ -504,13 +504,6 @@
     });
     fileInput.addEventListener('change', (event) => { if (event.target.files.length) handleFile(event.target.files[0]); });
     
-    // Home button alert
-    document.querySelector('.home-button').addEventListener('click', (e) => {
-        e.preventDefault();
-        // A custom modal would be better, but alert is used for simplicity here.
-        alert('This would return to the main page.');
-    });
-
     function downloadFile(content, fileName, mimeType) {
         try {
             const blob = new Blob([content], { type: mimeType });
@@ -634,4 +627,4 @@
 </script>
 
 </body>
-</html>
+</ht
