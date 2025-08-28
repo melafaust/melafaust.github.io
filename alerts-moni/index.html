@@ -206,11 +206,11 @@
     <div class="top-header-wrapper">
         <div class="top-header-content">
             <div class="header-left">
-                <a href="#" class="home-button" onclick="alert('This would return to the main page.');">Home</a>
+                <a href="../" class="home-button">Home</a>
                 <h1>Automated Alerts Monitoring via Webhooks</h1>
             </div>
             <button id="dark-mode-toggle" aria-label="Toggle Dark Mode">
-                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.64 5.64c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L5.64 5.64zm12.73 12.73c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.41-1.41zM5.64 18.36c.39.39.39 1.02 0 1.41-.39.39-1.02-.39-1.41 0l-1.41-1.41c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l1.41 1.41zm12.73-12.73c.39.39.39 1.02 0 1.41-.39.39-1.02-.39-1.41 0l-1.41-1.41c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l1.41 1.41z"/></svg>
+                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.64 5.64c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L5.64 5.64zm12.73 12.73c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.41-1.41zM5.64 18.36c.39.39.39 1.02 0 1.41-.39.39-1.02.39-1.41 0l-1.41-1.41c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l1.41 1.41zm12.73-12.73c.39.39.39 1.02 0 1.41-.39.39-1.02-.39-1.41 0l-1.41-1.41c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l1.41 1.41z"/></svg>
                 <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12.3 4.9c.4-.2.6-.7.4-1.1-.2-.4-.7-.6-1.1-.4C7.8 4.8 5 8.3 5 12.5c0 4.4 3.6 8 8 8 3.7 0 6.8-2.5 7.8-6c.2-.4 0-.9-.4-1.1s-.9 0-1.1.4c-.8 2.3-3 4-5.4 4-3.3 0-6-2.7-6-6 0-2.9 2.1-5.4 5-5.9z"/></svg>
             </button>
         </div>
@@ -276,7 +276,7 @@ foreach ($group in $groupedByDate) {
     $date = [datetime]$group.Name
     $formattedDate = $date.ToString("MMMM dd, yyyy (dddd)")
     $message += "**📅 Failed Pipelines Report – $formattedDate**`n`n"
-    $message += "```````n"
+    $message += "````n"
 
     # Filter Transform_DimFact and Transform_ALM failures
     $detailedFailures = $group.Group | Where-Object { $_.'Pipeline name' -like "*Transform_DimFact*" -or $_.'Pipeline name' -like "*Transform_ALM*" }
@@ -303,9 +303,9 @@ foreach ($group in $groupedByDate) {
 
             # Format message
             $message += "❌ $pipelineName`n"
-            $message += "     ⚠️ Error: $briefError`n"
+            $message += "      ⚠️ Error: $briefError`n"
             if ($errorCode) {
-                $message += "          🧾 $errorCode`n"
+                $message += "             🧾 $errorCode`n"
             }
             $message += "`n"
         }
@@ -325,7 +325,7 @@ foreach ($group in $groupedByDate) {
         }
     }
 
-    $message += "```````n`n"
+    $message += "````n`n"
 }
 
 # If no failures found
