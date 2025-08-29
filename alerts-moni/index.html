@@ -224,6 +224,7 @@
             </div>
             <div class="code-block-wrapper">
                 <pre><code id="code-block">
+
 # Set variables
 # Please replace the csv path based on the exported path in your local
 $csvPaths = @(
@@ -279,7 +280,7 @@ foreach ($group in $groupedByDate) {
     $message += "```````n"
 
     # Filter Transform_DimFact and Transform_ALM failures
-    $detailedFailures = $group.Group | Where-Object { $_.'Pipeline name' -like "*Transform_DimFact*" -or $_.'Pipeline name' -like "*Transform_ALM*" }
+    $detailedFailures = $group.Group | Where-Object { $_.'Pipeline name' -like "*Transform_DimFact*" -or $_.'Pipeline name' -like "*Transform*" }
     if ($detailedFailures.Count -eq 0) {
         $message += "✅ No Transform_DimFact or Transform_ALM failures found for this date.`n`n"
     } else {
@@ -329,6 +330,7 @@ if ($groupedByDate.Count -eq 0) {
 $payload = @{ text = $message } | ConvertTo-Json -Depth 3
 $utf8Bytes = [System.Text.Encoding]::UTF8.GetBytes($payload)
 Invoke-RestMethod -Uri $webhookUrl -Method Post -Body $utf8Bytes -ContentType 'application/json'
+                
                 </code></pre>
             </div>
         </div>
