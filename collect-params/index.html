@@ -251,7 +251,6 @@
             
             <div class="code-block-container">
                 <pre><code id="code-block">
-
 // ==UserScript==
 // @name         Automatic Parameter Collector & Cleanser for ADO Insights
 // @description  Automatically scrapes and cleanses data, making it ready for rerun.
@@ -522,7 +521,7 @@
         validRows.forEach((rowObject) => {
             totalSetsProcessed++;
             const params = rowObject.body.urlparams;
-            
+
             const sortedParams = params.slice().sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
             const setSignature = JSON.stringify(sortedParams);
 
@@ -532,7 +531,6 @@
             }
         });
 
-        // --- ✅ MODIFIED: Added an extra newline to the separator for a blank line ---
         const separator = `,\n\n`;
         formattedOutput.value = Array.from(uniqueSetsMap.values()).join(separator);
 
