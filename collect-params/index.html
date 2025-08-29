@@ -217,6 +217,8 @@
         
         .code-block-container pre {
             color: var(--text-color-dark);
+            white-space: pre-wrap; /* Allows long lines to wrap */
+            word-break: break-all; /* Breaks long words or strings */
         }
 
     </style>
@@ -250,9 +252,8 @@
             </div>
             
             <div class="code-block-container">
-                <pre><code id="code-block">
-// ==UserScript==
-// @name         Automatic Parameter Collector & Cleanser for ADO Insights
+<pre><code id="code-block">// ==UserScript==
+// @name         Automatic Parameter Collector &amp; Cleanser for ADO Insights
 // @description  Automatically scrapes and cleanses data, making it ready for rerun.
 // @author       Mela Faustino
 // ==/UserScript==
@@ -345,7 +346,7 @@
     const actionButtonsContainer = document.createElement('div');
     applyStyles(actionButtonsContainer, { display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' });
 
-    const azureButton = createButton('Process & Cleanse', THEME.actionButtonBg, handleProcessAzure);
+    const azureButton = createButton('Process &amp; Cleanse', THEME.actionButtonBg, handleProcessAzure);
     actionButtonsContainer.appendChild(azureButton);
 
     const simpleActionsContainer = document.createElement('div');
@@ -377,7 +378,7 @@
     const statusMessage = createStatusMessage();
     document.body.appendChild(statusMessage);
 
-    // --- Event Handlers & Main Logic ---
+    // --- Event Handlers &amp; Main Logic ---
     function toggleMenu() {
         if (isScraping) return;
         menuVisible = !menuVisible;
@@ -418,7 +419,7 @@
                     break;
                 }
                 const nextPageButton = activePageElement.nextElementSibling;
-                if (nextPageButton && nextPageButton.matches('button.p-paginator-page')) {
+                if (nextPageButton &amp;&amp; nextPageButton.matches('button.p-paginator-page')) {
                     const nextPageNumber = parseInt(nextPageButton.innerText.trim(), 10);
                     log(`Navigating to page ${nextPageNumber}...`, false);
                     nextPageButton.click();
@@ -457,7 +458,7 @@
         if (allVisibleRows.length === 0) return [];
         const targetRows = Array.from(allVisibleRows).filter(row => {
             const nameElement = row.querySelector('[class*="name-field"] span');
-            return nameElement && nameElement.textContent.trim() === targetActivityName;
+            return nameElement &amp;&amp; nameElement.textContent.trim() === targetActivityName;
         });
         if (targetRows.length === 0) {
             log(`No runs named "${targetActivityName}" found on this page.`);
@@ -465,9 +466,9 @@
         }
 
         log(`Found ${targetRows.length} matching runs on this page.`);
-        for (let i = 0; i < targetRows.length; i++) {
+        for (let i = 0; i &lt; targetRows.length; i++) {
             const row = targetRows[i];
-            log(`-> Processing row ${i + 1} of ${targetRows.length}...`, false);
+            log(`-&gt; Processing row ${i + 1} of ${targetRows.length}...`, false);
             row.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
             await delay(100);
             const inputButton = row.querySelector('button[aria-label="Input"]');
@@ -516,7 +517,7 @@
         const uniqueSetsMap = new Map();
         let totalSetsProcessed = 0;
 
-        const validRows = parsedJSON.filter(row => row && Array.isArray(row.body?.urlparams) && row.body.urlparams.length > 0);
+        const validRows = parsedJSON.filter(row => row &amp;&amp; Array.isArray(row.body?.urlparams) &amp;&amp; row.body.urlparams.length > 0);
 
         validRows.forEach((rowObject) => {
             totalSetsProcessed++;
@@ -616,11 +617,11 @@
         showStatusMessage("Fields and data have been cleared.", "info");
     }
 
-    // --- UI & State Utilities ---
+    // --- UI &amp; State Utilities ---
     function setScrapingState(isStarting, activityName, finalStatus = '', cleanseStats = null) {
         isScraping = isStarting;
         azureButton.disabled = isStarting;
-        azureButton.textContent = isStarting ? 'Processing...' : 'Process & Cleanse';
+        azureButton.textContent = isStarting ? 'Processing...' : 'Process &amp; Cleanse';
         progressBarContainer.style.display = isStarting ? 'block' : 'none';
         completionStatus.style.display = 'none';
 
@@ -650,7 +651,7 @@
                     break;
             }
             if (statusText) {
-                completionStatus.innerHTML = statusText.replace(/\n/g, '<br>');
+                completionStatus.innerHTML = statusText.replace(/\n/g, '&lt;br>');
                 completionStatus.style.color = statusColor;
                 completionStatus.style.display = 'block';
             }
@@ -746,7 +747,7 @@
 
     // --- Drag Functionality ---
     menuHeader.addEventListener('mousedown', (e) => { if (e.target === closeButton || e.target.parentElement === closeButton) return; isDragging = true; offsetX = e.clientX - menu.offsetLeft; offsetY = e.clientY - menu.offsetTop; menu.style.cursor = 'grabbing'; document.body.style.userSelect = 'none'; });
-    document.addEventListener('mousemove', (e) => { if (!isDragging) return; let newX = e.clientX - offsetX; let newY = e.clientY - offsetY; const menuRect = menu.getBoundingClientRect(); if (newX < 0) newX = 0; if (newY < 0) newY = 0; if (newX + menuRect.width > window.innerWidth) newX = window.innerWidth - menuRect.width; if (newY + menuRect.height > window.innerHeight) newY = window.innerHeight - menuRect.height; menu.style.left = `${newX}px`; menu.style.top = `${newY}px`; menu.style.transform = 'none'; });
+    document.addEventListener('mousemove', (e) => { if (!isDragging) return; let newX = e.clientX - offsetX; let newY = e.clientY - offsetY; const menuRect = menu.getBoundingClientRect(); if (newX &lt; 0) newX = 0; if (newY &lt; 0) newY = 0; if (newX + menuRect.width > window.innerWidth) newX = window.innerWidth - menuRect.width; if (newY + menuRect.height > window.innerHeight) newY = window.innerHeight - menuRect.height; menu.style.left = `${newX}px`; menu.style.top = `${newY}px`; menu.style.transform = 'none'; });
     document.addEventListener('mouseup', () => { if (isDragging) { isDragging = false; menu.style.cursor = 'move'; document.body.style.userSelect = ''; } });
 
     // --- Polling and Waiting Functions ---
@@ -794,7 +795,7 @@
             const poller = setInterval(() => {
                 const activePageElement = document.querySelector('button.p-paginator-page.p-highlight');
                 elapsedTime += interval;
-                if (activePageElement && parseInt(activePageElement.innerText.trim(), 10) === expectedPage) {
+                if (activePageElement &amp;&amp; parseInt(activePageElement.innerText.trim(), 10) === expectedPage) {
                     clearInterval(poller);
                     resolve();
                 } else if (elapsedTime >= timeout) {
@@ -809,7 +810,7 @@
     window.removeCollectorUI = function() { mainButton.remove(); menu.remove(); statusMessage.remove(); delete window.removeCollectorUI; console.log("Automatic Parameter Collector UI removed."); };
     console.log("Automatic Parameter Collector UI Injected. Click the '🛠️ Auto Collector' button. Type 'removeCollectorUI()' in console to remove.");
 })();
-                </code></pre>
+</code></pre>
             </div>
         </div>
     </main>
@@ -838,25 +839,36 @@
         const copyMessage = document.getElementById('copy-message');
 
         copyButton.addEventListener('click', () => {
-            const codeToCopy = codeBlock.innerText;
-            const tempTextArea = document.createElement('textarea');
-            tempTextArea.value = codeToCopy;
-            tempTextArea.style.position = 'absolute';
-            tempTextArea.style.left = '-9999px';
-            document.body.appendChild(tempTextArea);
-
-            tempTextArea.select();
-            try {
-                document.execCommand('copy');
+            const codeToCopy = codeBlock.textContent; // Use textContent for accuracy
+            
+            // Use the modern Clipboard API
+            navigator.clipboard.writeText(codeToCopy).then(() => {
                 copyMessage.classList.add('visible');
                 setTimeout(() => {
                     copyMessage.classList.remove('visible');
                 }, 2000);
-            } catch (err) {
+            }).catch(err => {
                 console.error('Failed to copy text: ', err);
-            }
+                // Fallback for older browsers (optional, but good practice)
+                try {
+                    const tempTextArea = document.createElement('textarea');
+                    tempTextArea.value = codeToCopy;
+                    tempTextArea.style.position = 'absolute';
+                    tempTextArea.style.left = '-9999px';
+                    document.body.appendChild(tempTextArea);
+                    tempTextArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempTextArea);
 
-            document.body.removeChild(tempTextArea);
+                    copyMessage.classList.add('visible');
+                    setTimeout(() => {
+                        copyMessage.classList.remove('visible');
+                    }, 2000);
+                } catch (fallbackErr) {
+                    console.error('Fallback copy method failed:', fallbackErr);
+                    alert('Failed to copy text.');
+                }
+            });
         });
 
         // --- Initial Load ---
