@@ -179,7 +179,8 @@
 
         .input-label { font-weight: 600; margin-bottom: 0.5rem; display: block; }
         .form-section { margin-bottom: 2rem; }
-        select, textarea {
+        /* MODIFIED: Added input[type="text"] to apply consistent styling */
+        select, textarea, input[type="text"] {
             width: 100%;
             padding: 0.8rem 1rem;
             border: 1px solid var(--border-color);
@@ -189,7 +190,12 @@
             font-size: 1rem;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-        select:focus, textarea:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px var(--accent-color-light); }
+        /* MODIFIED: Added input[type="text"]:focus for consistent styling */
+        select:focus, textarea:focus, input[type="text"]:focus { 
+            outline: none; 
+            border-color: var(--accent-color); 
+            box-shadow: 0 0 0 3px var(--accent-color-light); 
+        }
         textarea { min-height: 16rem; font-family: 'SF Mono', 'Fira Code', monospace; resize: vertical; }
 
         #dropZone {
@@ -251,11 +257,13 @@
                 <p>Instantly transform your CSV files into clean, structured JSON for Reingestion.</p>
             </header>
 
+            <!-- MODIFIED: Added custom text input -->
             <section class="form-section">
                 <label for="tenantSelect" class="input-label">Tenant:</label>
                 <select id="tenantSelect">
                     <option value="">-- Select Tenant --</option>
                 </select>
+                <input type="text" id="customTenantInput" placeholder="Enter custom tenant name" style="display: none; margin-top: 0.75rem;">
             </section>
 
             <section class="form-section">
@@ -291,6 +299,7 @@
     const outputBox = document.getElementById('outputBox');
     const fileInfoDiv = document.getElementById('fileInfo');
     const tenantSelect = document.getElementById('tenantSelect');
+    const customTenantInput = document.getElementById('customTenantInput'); // ADDED
     const saveTxtButton = document.getElementById('saveTxtButton');
     const saveJsonButton = document.getElementById('saveJsonButton');
     const saveCsvButton = document.getElementById('saveCsvButton');
@@ -313,6 +322,12 @@
             option.textContent = tenantId;
             tenantSelect.appendChild(option);
         });
+
+        // ADDED: Custom tenant option
+        const customOption = document.createElement('option');
+        customOption.value = 'custom';
+        customOption.textContent = '-- Type a Custom Tenant --';
+        tenantSelect.appendChild(customOption);
     }
 
     // --- Dark Mode Logic ---
@@ -358,6 +373,18 @@
         values.push(currentValue.trim());
         return values;
     }
+    
+    // ADDED: Helper function to get the current tenant value
+    /**
+     * Gets the currently selected tenant, whether from the dropdown or the custom input.
+     * @returns {string} The tenant ID.
+     */
+    function getSelectedTenant() {
+        if (tenantSelect.value === 'custom') {
+            return customTenantInput.value.trim();
+        }
+        return tenantSelect.value;
+    }
 
     /**
      * Handles the file input (from drag-drop or browse).
@@ -369,9 +396,10 @@
             return;
         }
         
-        const selectedTenant = tenantSelect.value;
+        // MODIFIED: Use the helper function and update message
+        const selectedTenant = getSelectedTenant();
         if (!selectedTenant) {
-            showMessage('Please select a Tenant first.', 'error');
+            showMessage('Please select or enter a Tenant first.', 'error');
             fileInput.value = null; 
             return;
         }
@@ -448,7 +476,8 @@
         }
 
         const processValue = 'missing';
-        const selectedTenant = tenantSelect.value;
+        // MODIFIED: Use helper function
+        const selectedTenant = getSelectedTenant();
 
         const allObjects = dataLines.map(line => {
             const values = parseCsvRow(line);
@@ -504,6 +533,17 @@
     });
     fileInput.addEventListener('change', (event) => { if (event.target.files.length) handleFile(event.target.files[0]); });
     
+    // ADDED: Event listener for tenant dropdown to show/hide custom input
+    tenantSelect.addEventListener('change', () => {
+        if (tenantSelect.value === 'custom') {
+            customTenantInput.style.display = 'block';
+            customTenantInput.focus();
+        } else {
+            customTenantInput.style.display = 'none';
+            customTenantInput.value = ''; // Clear the input when another option is selected
+        }
+    });
+
     function downloadFile(content, fileName, mimeType) {
         try {
             const blob = new Blob([content], { type: mimeType });
@@ -523,17 +563,19 @@
 
     saveTxtButton.addEventListener('click', () => {
         const textToSave = outputBox.value;
-        const selectedTenant = tenantSelect.value;
+        // MODIFIED: Use helper function and update message
+        const selectedTenant = getSelectedTenant();
         if (!textToSave) { showMessage("Nothing to save.", 'info'); return; }
-        if (!selectedTenant) { showMessage("Please select a Tenant to name the file.", 'error'); return; }
+        if (!selectedTenant) { showMessage("Please select or enter a Tenant to name the file.", 'error'); return; }
         const fileName = `${selectedTenant}_builds_output.txt`;
         downloadFile(textToSave, fileName, 'text/plain;charset=utf-8');
     });
     
     saveJsonButton.addEventListener('click', () => {
-        const selectedTenant = tenantSelect.value;
+        // MODIFIED: Use helper function and update message
+        const selectedTenant = getSelectedTenant();
         if (processedJsonObjects.length === 0) { showMessage("No data to save.", 'info'); return; }
-        if (!selectedTenant) { showMessage("Please select a Tenant to name the file.", 'error'); return; }
+        if (!selectedTenant) { showMessage("Please select or enter a Tenant to name the file.", 'error'); return; }
         
         const jsonString = JSON.stringify(processedJsonObjects, null, 4); // Pretty print the valid JSON array
         const fileName = `${selectedTenant}_builds_output.json`;
@@ -541,9 +583,10 @@
     });
 
     saveCsvButton.addEventListener('click', () => {
-        const selectedTenant = tenantSelect.value;
+        // MODIFIED: Use helper function and update message
+        const selectedTenant = getSelectedTenant();
         if (processedJsonObjects.length === 0) { showMessage("No data to save.", 'info'); return; }
-        if (!selectedTenant) { showMessage("Please select a Tenant to name the file.", 'error'); return; }
+        if (!selectedTenant) { showMessage("Please select or enter a Tenant to name the file.", 'error'); return; }
 
         const header = "tenant,ProjectName,BuildId,AirId,definitiontype\n";
         let csvContent = header;
@@ -594,7 +637,12 @@
         fileInfoDiv.textContent = '';
         fileInput.value = null; 
         tenantSelect.value = ""; 
-        processedJsonObjects = []; // Clear the stored data
+        processedJsonObjects = [];
+        
+        // MODIFIED: Hide and clear custom input on reset
+        customTenantInput.style.display = 'none';
+        customTenantInput.value = '';
+
         showMessage('Tool has been reset.', 'info');
     });
 
@@ -627,4 +675,4 @@
 </script>
 
 </body>
-</ht
+</html>
