@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV to JSON Converter | Workitem Revision</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-main);
+            transition: background-color 0.3s, color 0.3s;
+            padding: 20px;
+        }
+
+        .container { max-width: 900px; margin: 40px auto; }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        header p { color: var(--text-muted); font-size: 1.1rem; }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 24px;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .upload-zone svg {
+            width: 48px;
+            height: 48px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        #fileInput { display: none; }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .label { font-weight: 600; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; }
+
+        textarea {
+            width: 100%;
+            height: 400px;
+            background: var(--bg-color);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            resize: vertical;
+            margin-bottom: 20px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: var(--border); }
+
+        #status {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .status-success { background: rgba(16, 185, 129, 0.1); color: var(--success); display: block !important; }
+        .status-error { background: rgba(239, 68, 68, 0.1); color: #ef4444; display: block !important; }
+
+        .mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="mode-toggle" id="themeToggle" title="Toggle Dark Mode">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+</div>
+
+<div class="container">
+    <header>
+        <h1>JSON Batcher</h1>
+        <p>Workitem Revision Automation Tool</p>
+    </header>
+
+    <div class="card">
+        <div class="upload-zone" id="dropZone">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            <p><strong>Click to upload</strong> or drag and drop</p>
+            <p style="font-size: 0.85rem; margin-top: 4px;">Any CSV file (auto-detects WorkItemId)</p>
+            <input type="file" id="fileInput" accept=".csv">
+        </div>
+
+        <div class="controls">
+            <span class="label">JSON Output (200 IDs per row, comma separated)</span>
+            <span id="fileLabel" style="font-size: 0.8rem; color: var(--text-muted);"></span>
+        </div>
+
+        <textarea id="outputArea" spellcheck="false" placeholder='{"tenant":"...","param1":"...","param2":"..."}'></textarea>
+
+        <div class="actions">
+            <button class="btn btn-primary" id="copyBtn">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                Copy All JSON
+            </button>
+            <button class="btn btn-outline" id="clearBtn">Clear</button>
+        </div>
+
+        <div id="status"></div>
+    </div>
+</div>
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const outputArea = document.getElementById('outputArea');
+    const status = document.getElementById('status');
+    const fileLabel = document.getElementById('fileLabel');
+    const themeToggle = document.getElementById('themeToggle');
+
+    // Theme logic
+    themeToggle.onclick = () => document.body.classList.toggle('dark-mode');
+
+    // Upload logic
+    dropZone.onclick = () => fileInput.click();
+    dropZone.ondragover = (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--primary)'; };
+    dropZone.ondragleave = () => { dropZone.style.borderColor = 'var(--border)'; };
+    dropZone.ondrop = (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--border)';
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    };
+    fileInput.onchange = (e) => { if (e.target.files.length) handleFile(e.target.files[0]); };
+
+    function handleFile(file) {
+        fileLabel.textContent = `Selected: ${file.name}`;
+        const reader = new FileReader();
+        reader.onload = (e) => processData(e.target.result);
+        reader.readAsText(file);
+    }
+
+    function parseCSV(text) {
+        const rows = [];
+        let currentRow = [];
+        let currentCell = '';
+        let inQuotes = false;
+
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const nextChar = text[i + 1];
+
+            if (char === '"' && inQuotes && nextChar === '"') {
+                currentCell += '"';
+                i++;
+            } else if (char === '"') {
+                inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+                currentRow.push(currentCell.trim());
+                currentCell = '';
+            } else if ((char === '\r' || char === '\n') && !inQuotes) {
+                if (currentCell || currentRow.length > 0) {
+                    currentRow.push(currentCell.trim());
+                    rows.push(currentRow);
+                }
+                currentRow = [];
+                currentCell = '';
+                if (char === '\r' && nextChar === '\n') i++;
+            } else {
+                currentCell += char;
+            }
+        }
+        if (currentCell || currentRow.length > 0) {
+            currentRow.push(currentCell.trim());
+            rows.push(currentRow);
+        }
+        return rows;
+    }
+
+    function processData(csvText) {
+        try {
+            const rows = parseCSV(csvText);
+            if (rows.length === 0) throw new Error("File is empty.");
+
+            // Find header row (it's not always the first row)
+            let headerIdx = -1;
+            for (let i = 0; i < rows.length; i++) {
+                const rowStr = rows[i].join(',').toLowerCase();
+                if (rowStr.includes('tenant') && rowStr.includes('workitemid')) {
+                    headerIdx = i;
+                    break;
+                }
+            }
+
+            if (headerIdx === -1) throw new Error("Could not find required columns (Tenant, ProjectName, WorkItemId).");
+
+            const headers = rows[headerIdx].map(h => h.toLowerCase());
+            const tenantIdx = headers.indexOf('tenant');
+            const projectIdx = headers.indexOf('projectname');
+            const idIdx = headers.indexOf('workitemid');
+
+            const dataRows = rows.slice(headerIdx + 1);
+            const groups = {};
+
+            dataRows.forEach(row => {
+                if (row.length <= Math.max(tenantIdx, projectIdx, idIdx)) return;
+                
+                const tenant = row[tenantIdx];
+                const project = row[projectIdx];
+                const id = row[idIdx];
+
+                if (!tenant || !project || !id) return;
+
+                const key = `${tenant}|${project}`;
+                if (!groups[key]) {
+                    groups[key] = { tenant, project, ids: [] };
+                }
+                groups[key].ids.push(id);
+            });
+
+            const jsonResults = [];
+            let totalIds = 0;
+
+            for (const key in groups) {
+                const group = groups[key];
+                const ids = group.ids;
+                totalIds += ids.length;
+
+                // Split into batches of 200
+                for (let i = 0; i < ids.length; i += 200) {
+                    const batch = ids.slice(i, i + 200);
+                    jsonResults.push({
+                        tenant: group.tenant,
+                        param1: group.project,
+                        param2: batch.join(',')
+                    });
+                }
+            }
+
+            // JOIN WITH COMMA AND NEWLINE
+            outputArea.value = jsonResults.map(j => JSON.stringify(j) + ',').join('\n\n');
+            
+            showStatus(`Processed ${totalIds} items into ${jsonResults.length} JSON batches.`, 'success');
+        } catch (err) {
+            showStatus(err.message, 'error');
+            outputArea.value = '';
+        }
+    }
+
+    function showStatus(msg, type) {
+        status.textContent = msg;
+        status.className = type === 'success' ? 'status-success' : 'status-error';
+    }
+
+    document.getElementById('copyBtn').onclick = () => {
+        if (!outputArea.value) return;
+        outputArea.select();
+        document.execCommand('copy');
+        const originalText = document.getElementById('copyBtn').innerHTML;
+        document.getElementById('copyBtn').innerHTML = 'Copied!';
+        setTimeout(() => {
+            document.getElementById('copyBtn').innerHTML = originalText;
+        }, 2000);
+    };
+
+    document.getElementById('clearBtn').onclick = () => {
+        outputArea.value = '';
+        fileLabel.textContent = '';
+        status.className = '';
+        fileInput.value = '';
+    };
+</script>
+
+</body>
+</html>
