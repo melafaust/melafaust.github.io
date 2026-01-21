@@ -180,7 +180,7 @@
         </div>
 
         <div class="controls">
-            <span class="label">JSON Output (200 IDs per row, comma separated)</span>
+            <span class="label">JSON Output (200 unique IDs per row, comma separated)</span>
             <span id="fileLabel" style="font-size: 0.8rem; color: var(--text-muted);"></span>
         </div>
 
@@ -269,7 +269,6 @@
             const rows = parseCSV(csvText);
             if (rows.length === 0) throw new Error("File is empty.");
 
-            // Find header row (it's not always the first row)
             let headerIdx = -1;
             for (let i = 0; i < rows.length; i++) {
                 const rowStr = rows[i].join(',').toLowerCase();
@@ -294,28 +293,29 @@
                 
                 const tenant = row[tenantIdx];
                 const project = row[projectIdx];
-                const id = row[idIdx];
+                const id = row[idIdx]?.trim();
 
                 if (!tenant || !project || !id) return;
 
                 const key = `${tenant}|${project}`;
                 if (!groups[key]) {
-                    groups[key] = { tenant, project, ids: [] };
+                    // Use a Set to ensure param2 (IDs) contains no duplicates
+                    groups[key] = { tenant, project, ids: new Set() };
                 }
-                groups[key].ids.push(id);
+                groups[key].ids.add(id);
             });
 
             const jsonResults = [];
-            let totalIds = 0;
+            let totalUniqueIds = 0;
 
             for (const key in groups) {
                 const group = groups[key];
-                const ids = group.ids;
-                totalIds += ids.length;
+                const idsArray = Array.from(group.ids); // Convert Set back to Array for batching
+                totalUniqueIds += idsArray.length;
 
-                // Split into batches of 200
-                for (let i = 0; i < ids.length; i += 200) {
-                    const batch = ids.slice(i, i + 200);
+                // Split unique IDs into batches of 200
+                for (let i = 0; i < idsArray.length; i += 200) {
+                    const batch = idsArray.slice(i, i + 200);
                     jsonResults.push({
                         tenant: group.tenant,
                         param1: group.project,
@@ -324,10 +324,9 @@
                 }
             }
 
-            // JOIN WITH COMMA AND NEWLINE
             outputArea.value = jsonResults.map(j => JSON.stringify(j) + ',').join('\n\n');
             
-            showStatus(`Processed ${totalIds} items into ${jsonResults.length} JSON batches.`, 'success');
+            showStatus(`Processed ${totalUniqueIds} unique items into ${jsonResults.length} JSON batches.`, 'success');
         } catch (err) {
             showStatus(err.message, 'error');
             outputArea.value = '';
